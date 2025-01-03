@@ -7,8 +7,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import br.com.edielsonassis.authuser.dtos.UserDto;
-import br.com.edielsonassis.authuser.models.UserModel;
+import br.com.edielsonassis.authuser.dtos.UserDto.UserView;
 import br.com.edielsonassis.authuser.services.UserService;
 import lombok.AllArgsConstructor;
 
@@ -20,7 +22,8 @@ public class AuthenticationController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserModel> registerUser(@RequestBody UserDto userDto) {
+    @JsonView(UserView.publicGet.class)
+    public ResponseEntity<UserDto> registerUser(@RequestBody @JsonView(UserView.registrationPost.class) UserDto userDto) {
         var user = userService.saveUser(userDto);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }

@@ -4,15 +4,20 @@ import java.util.List;
 import java.util.UUID;
 
 import br.com.edielsonassis.authuser.dtos.UserDto;
-import br.com.edielsonassis.authuser.models.UserModel;
 
 public interface UserService {
 
-    UserModel saveUser(UserDto userDto);
+    UserDto saveUser(UserDto userDto);
 
-    List<UserModel> getAllUsers();
+    List<UserDto> findAllUsers();
 
-    UserModel getOneUser(UUID userId);
+    UserDto findUserById(UUID userId);
 
-    void deleteUser(UUID userId);
+    String deleteUserById(UUID userId);
+
+    UserDto updateUserById(UUID userId, UserDto userDto);
+
+    String updateUserPasswordById(UUID userId, UserDto userDto);
+
+    UserDto updateUserImageById(UUID userId, UserDto userDto);
 }

@@ -8,10 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.edielsonassis.authuser.models.UserModel;
+import com.fasterxml.jackson.annotation.JsonView;
+
+import br.com.edielsonassis.authuser.dtos.UserDto;
+import br.com.edielsonassis.authuser.dtos.UserDto.UserView;
 import br.com.edielsonassis.authuser.services.UserService;
 import lombok.AllArgsConstructor;
 
@@ -23,20 +28,42 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<UserModel>> getAllUsers() {
-        var users = userService.getAllUsers();
+    @JsonView(UserView.publicGet.class)
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        var users = userService.findAllUsers();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserModel> getOneUser(@PathVariable UUID userId) {
-        var user = userService.getOneUser(userId);
+    @JsonView(UserView.publicGet.class)
+    public ResponseEntity<UserDto> getOneUser(@PathVariable UUID userId) {
+        var user = userService.findUserById(userId);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable UUID userId) {
-        userService.deleteUser(userId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> deleteUser(@PathVariable UUID userId) {
+        var user = userService.deleteUserById(userId);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @PutMapping("/{userId}")
+    @JsonView(UserView.publicGet.class)
+    public ResponseEntity<UserDto> updateUser(@PathVariable UUID userId, @RequestBody @JsonView(UserView.userPut.class) UserDto userDto) {
+        var user = userService.updateUserById(userId, userDto);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @PutMapping("/{userId}/password")
+    public ResponseEntity<String> updatePassword(@PathVariable UUID userId, @RequestBody @JsonView(UserView.passwordPut.class) UserDto userDto) {
+        var user = userService.updateUserPasswordById(userId, userDto);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @PutMapping("/{userId}/image")
+    @JsonView(UserView.publicGet.class)
+    public ResponseEntity<UserDto> updateImage(@PathVariable UUID userId, @RequestBody @JsonView(UserView.imagePut.class) UserDto userDto) {
+        var user = userService.updateUserImageById(userId, userDto);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 }

@@ -26,26 +26,83 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceImpl implements UserService {
    
     private final UserRepository userRepository;
+    private static final String ZONE_ID = "America/Sao_Paulo";
 
     @Transactional
     @Override
-    public UserModel saveUser(UserDto userDto) {
+    public UserDto saveUser(UserDto userDto) {
         var userModel = convertDtoToModel(userDto);
         validateUserNameNotExists(userModel);
         validateEmailNotExists(userModel);
         validateCpfNotExists(userModel);
         log.info("Registering a new User: {}", userModel.getUserName());
-        return userRepository.save(userModel);
+        userRepository.save(userModel);
+        BeanUtils.copyProperties(userModel, userDto);
+        return userDto;
     }
 
     @Override
-    public List<UserModel> getAllUsers() {
+    public List<UserDto> findAllUsers() {
         log.info("Listing all users");
-        return userRepository.findAll();
+        return userRepository.findAll().stream().map(UserModel -> {
+            var userDto = new UserDto();
+            BeanUtils.copyProperties(UserModel, userDto);
+            return userDto;
+        }).toList();
     }
 
     @Override
-    public UserModel getOneUser(UUID userId) {
+    public UserDto findUserById(UUID userId) {
+        var userModel = findById(userId);
+        var userDto = new UserDto();
+        BeanUtils.copyProperties(userModel, userDto);
+        return userDto; 
+    }
+
+    @Transactional
+    @Override
+    public String deleteUserById(UUID userId) {
+        var user = findById(userId);
+        log.info("Deleting user with id: {}", user.getUserId());
+        userRepository.delete(user);
+        return "User deleted successfully";
+    }
+
+    @Transactional
+    @Override
+    public UserDto updateUserById(UUID userId, UserDto userDto) {
+        var userModel = findById(userId);
+        userModel.setFullName(userDto.getFullName());
+        userModel.setPhoneNumber(userDto.getPhoneNumber());
+        userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
+        log.info("Updating user with id: {}", userId);
+        userRepository.save(userModel);
+        BeanUtils.copyProperties(userModel, userDto);
+        return userDto;
+    }
+
+    @Override
+    public String updateUserPasswordById(UUID userId, UserDto userDto) {
+        var userModel = findById(userId);
+        userModel.setPassword(userDto.getPassword());
+        userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
+        log.info("Updating password");
+        userRepository.save(userModel);
+        return "Password updated successfully";
+    }
+
+    @Override
+    public UserDto updateUserImageById(UUID userId, UserDto userDto) {
+        var userModel = findById(userId);
+        userModel.setImgUrl(userDto.getImgUrl());
+        userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
+        log.info("Updating image");
+        userRepository.save(userModel);
+        BeanUtils.copyProperties(userModel, userDto);
+        return userDto;
+    }
+
+    private UserModel findById(UUID userId) {
         log.info("Verifying the user's Id: {}", userId);
         return userRepository.findById(userId).orElseThrow(() -> {
             log.error("User id not found: {}", userId);
@@ -53,21 +110,13 @@ public class UserServiceImpl implements UserService {
         }); 
     }
 
-    @Transactional
-    @Override
-    public void deleteUser(UUID userId) {
-        var user = getOneUser(userId);
-        log.info("Deleting user with username: {}", user.getUserName());
-        userRepository.delete(user);
-    }
-
     private UserModel convertDtoToModel(UserDto userDto) {
         var userModel = new UserModel();
         BeanUtils.copyProperties(userDto, userModel);
         userModel.setUserStatus(UserStatus.ACTIVE);
         userModel.setUserType(UserType.STUDENT);
-        userModel.setCreationDate(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")));
-        userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")));
+        userModel.setCreationDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
+        userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
         return userModel;
     }
 
