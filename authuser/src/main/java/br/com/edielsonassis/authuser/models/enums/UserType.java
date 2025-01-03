@@ -1,4 +1,4 @@
-package br.com.edielsonassis.authuser.models;
+package br.com.edielsonassis.authuser.models.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

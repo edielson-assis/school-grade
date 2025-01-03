@@ -4,7 +4,11 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import br.com.edielsonassis.authuser.models.enums.UserStatus;
+import br.com.edielsonassis.authuser.models.enums.UserType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -37,6 +41,7 @@ public class UserModel implements Serializable {
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
+    @JsonIgnore
     @Column(nullable = false, length = 255)
     private String password;
 
@@ -60,9 +65,11 @@ public class UserModel implements Serializable {
     @Column(name = "img_url")
     private String imgUrl;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm:ss'Z'")
     @Column(nullable = false, name = "creation_date")
     private LocalDateTime creationDate;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm:ss'Z'")
     @Column(nullable = false, name = "last_update_date")
     private LocalDateTime lastUpdateDate;
 }
