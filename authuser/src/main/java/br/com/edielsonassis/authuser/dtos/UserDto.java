@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import br.com.edielsonassis.authuser.dtos.view.UserView;
 import br.com.edielsonassis.authuser.models.enums.UserStatus;
 import br.com.edielsonassis.authuser.models.enums.UserType;
+import br.com.edielsonassis.authuser.utils.validation.UsernameValidator;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -26,6 +27,7 @@ public class UserDto implements Serializable {
     @JsonView(UserView.publicGet.class)
     private UUID userId;
 
+    @UsernameValidator(groups = {UserView.registrationPost.class})
     @NotBlank(message = "UserName is required", groups = {UserView.registrationPost.class})
     @Size(min = 3, max = 50, message = "UserName must be between 3 and 50 characters", groups = {UserView.registrationPost.class})
     @JsonView({UserView.registrationPost.class, UserView.publicGet.class})
