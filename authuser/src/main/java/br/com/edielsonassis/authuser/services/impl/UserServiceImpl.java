@@ -1,9 +1,12 @@
 package br.com.edielsonassis.authuser.services.impl;
 
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,13 +41,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> findAllUsers() {
+    public Page<UserDto> findAllUsers(Integer page, Integer size, String direction) {
+        var sortDirection = "desc".equalsIgnoreCase(direction) ? Direction.DESC : Direction.ASC;
+		var pageable = PageRequest.of(page, size, Sort.by(sortDirection, "userName"));
         log.info("Listing all users");
-        return userRepository.findAll().stream().map(UserModel -> {
+        return userRepository.findAll(pageable).map(UserModel -> {
             var userDto = new UserDto();
             BeanUtils.copyProperties(UserModel, userDto);
             return userDto;
-        }).toList();
+        });
     }
 
     @Override
