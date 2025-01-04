@@ -1,4 +1,4 @@
-package br.com.edielsonassis.authuser.controller;
+package br.com.edielsonassis.authuser.controllers;
 
 import java.util.List;
 import java.util.UUID;

@@ -1,4 +1,4 @@
-package br.com.edielsonassis.authuser.controller;
+package br.com.edielsonassis.authuser.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

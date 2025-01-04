@@ -1,7 +1,5 @@
 package br.com.edielsonassis.authuser.services.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,9 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.edielsonassis.authuser.dtos.UserDto;
+import br.com.edielsonassis.authuser.mapper.UserMapper;
 import br.com.edielsonassis.authuser.models.UserModel;
-import br.com.edielsonassis.authuser.models.enums.UserStatus;
-import br.com.edielsonassis.authuser.models.enums.UserType;
 import br.com.edielsonassis.authuser.repositories.UserRepository;
 import br.com.edielsonassis.authuser.services.UserService;
 import br.com.edielsonassis.authuser.services.exceptions.ObjectNotFoundException;
@@ -26,12 +23,11 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceImpl implements UserService {
    
     private final UserRepository userRepository;
-    private static final String ZONE_ID = "America/Sao_Paulo";
 
     @Transactional
     @Override
     public UserDto saveUser(UserDto userDto) {
-        var userModel = convertDtoToModel(userDto);
+        var userModel = UserMapper.convertDtoToModel(userDto);
         validateUserNameNotExists(userModel);
         validateEmailNotExists(userModel);
         validateCpfNotExists(userModel);
@@ -72,9 +68,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUserById(UUID userId, UserDto userDto) {
         var userModel = findById(userId);
-        userModel.setFullName(userDto.getFullName());
-        userModel.setPhoneNumber(userDto.getPhoneNumber());
-        userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
+        userModel = UserMapper.updateUser(userModel, userDto);
         log.info("Updating user with id: {}", userId);
         userRepository.save(userModel);
         BeanUtils.copyProperties(userModel, userDto);
@@ -84,8 +78,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String updateUserPasswordById(UUID userId, UserDto userDto) {
         var userModel = findById(userId);
-        userModel.setPassword(userDto.getPassword());
-        userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
+        userModel = UserMapper.updatePassword(userModel, userDto);
         log.info("Updating password");
         userRepository.save(userModel);
         return "Password updated successfully";
@@ -94,8 +87,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUserImageById(UUID userId, UserDto userDto) {
         var userModel = findById(userId);
-        userModel.setImgUrl(userDto.getImgUrl());
-        userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
+        userModel = UserMapper.updateImage(userModel, userDto);
         log.info("Updating image");
         userRepository.save(userModel);
         BeanUtils.copyProperties(userModel, userDto);
@@ -108,16 +100,6 @@ public class UserServiceImpl implements UserService {
             log.error("User id not found: {}", userId);
             return new ObjectNotFoundException("User id not found: " + userId);
         }); 
-    }
-
-    private UserModel convertDtoToModel(UserDto userDto) {
-        var userModel = new UserModel();
-        BeanUtils.copyProperties(userDto, userModel);
-        userModel.setUserStatus(UserStatus.ACTIVE);
-        userModel.setUserType(UserType.STUDENT);
-        userModel.setCreationDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
-        userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
-        return userModel;
     }
 
     private synchronized void validateUserNameNotExists(UserModel user) {
