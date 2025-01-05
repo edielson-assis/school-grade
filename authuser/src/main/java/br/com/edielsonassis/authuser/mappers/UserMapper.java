@@ -5,7 +5,7 @@ import java.time.ZoneId;
 
 import org.springframework.beans.BeanUtils;
 
-import br.com.edielsonassis.authuser.dtos.UserDto;
+import br.com.edielsonassis.authuser.dtos.UserRequest;
 import br.com.edielsonassis.authuser.models.UserModel;
 import br.com.edielsonassis.authuser.models.enums.UserStatus;
 import br.com.edielsonassis.authuser.models.enums.UserType;
@@ -16,7 +16,7 @@ public class UserMapper {
     
     private UserMapper() {}
 
-    public static UserModel convertDtoToModel(UserDto userDto) {
+    public static UserModel convertDtoToModel(UserRequest userDto) {
         var userModel = new UserModel();
         BeanUtils.copyProperties(userDto, userModel);
         userModel.setUserStatus(UserStatus.ACTIVE);
@@ -26,20 +26,20 @@ public class UserMapper {
         return userModel;
     }
 
-    public static UserModel updateUser(UserModel userModel, UserDto userDto) {
+    public static UserModel updateUser(UserModel userModel, UserRequest userDto) {
         userModel.setFullName(userDto.getFullName());
         userModel.setPhoneNumber(userDto.getPhoneNumber());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
         return userModel;
     }
 
-    public static UserModel updatePassword(UserModel userModel, UserDto userDto) {
+    public static UserModel updatePassword(UserModel userModel, UserRequest userDto) {
         userModel.setPassword(userDto.getPassword());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
         return userModel;
     }
 
-    public static UserModel updateImage(UserModel userModel, UserDto userDto) {
+    public static UserModel updateImage(UserModel userModel, UserRequest userDto) {
         userModel.setImgUrl(userDto.getImgUrl());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
         return userModel;

@@ -11,8 +11,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.edielsonassis.authuser.dtos.PageUserDto;
-import br.com.edielsonassis.authuser.dtos.UserDto;
+import br.com.edielsonassis.authuser.dtos.UserReponse;
+import br.com.edielsonassis.authuser.dtos.UserRequest;
 import br.com.edielsonassis.authuser.mappers.UserMapper;
 import br.com.edielsonassis.authuser.models.UserModel;
 import br.com.edielsonassis.authuser.repositories.UserRepository;
@@ -31,35 +31,36 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserDto saveUser(UserDto userDto) {
+    public UserReponse saveUser(UserRequest userDto) {
         var userModel = UserMapper.convertDtoToModel(userDto);
         validateUserNameNotExists(userModel);
         validateEmailNotExists(userModel);
         validateCpfNotExists(userModel);
         log.info("Registering a new User: {}", userModel.getUserName());
         userRepository.save(userModel);
-        BeanUtils.copyProperties(userModel, userDto);
-        return userDto;
+        var userResponse = new UserReponse();
+        BeanUtils.copyProperties(userModel, userResponse);
+        return userResponse;
     }
 
     @Override
-    public Page<PageUserDto> findAllUsers(Integer page, Integer size, String direction, Specification<UserModel> spec) {
+    public Page<UserReponse> findAllUsers(Integer page, Integer size, String direction, Specification<UserModel> spec) {
         var sortDirection = "desc".equalsIgnoreCase(direction) ? Direction.DESC : Direction.ASC;
 		var pageable = PageRequest.of(page, size, Sort.by(sortDirection, "userId"));
         log.info("Listing all users");
         return userRepository.findAll(spec, pageable).map(userModel -> {
-            var userDto = new PageUserDto();
-            BeanUtils.copyProperties(userModel, userDto);
-            return userDto;
+            var userResponse = new UserReponse();
+            BeanUtils.copyProperties(userModel, userResponse);
+            return userResponse;
         });
     }
 
     @Override
-    public UserDto findUserById(UUID userId) {
+    public UserReponse findUserById(UUID userId) {
         var userModel = findById(userId);
-        var userDto = new UserDto();
-        BeanUtils.copyProperties(userModel, userDto);
-        return userDto; 
+        var userResponse = new UserReponse();
+        BeanUtils.copyProperties(userModel, userResponse);
+        return userResponse;
     }
 
     @Transactional
@@ -73,17 +74,18 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserDto updateUserById(UUID userId, UserDto userDto) {
+    public UserReponse updateUserById(UUID userId, UserRequest userDto) {
         var userModel = findById(userId);
         userModel = UserMapper.updateUser(userModel, userDto);
         log.info("Updating user with id: {}", userId);
         userRepository.save(userModel);
-        BeanUtils.copyProperties(userModel, userDto);
-        return userDto;
+        var userResponse = new UserReponse();
+        BeanUtils.copyProperties(userModel, userResponse);
+        return userResponse;
     }
 
     @Override
-    public String updateUserPasswordById(UUID userId, UserDto userDto) {
+    public String updateUserPasswordById(UUID userId, UserRequest userDto) {
         var userModel = findById(userId);
         userModel = UserMapper.updatePassword(userModel, userDto);
         log.info("Updating password");
@@ -92,13 +94,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUserImageById(UUID userId, UserDto userDto) {
+    public UserReponse updateUserImageById(UUID userId, UserRequest userDto) {
         var userModel = findById(userId);
         userModel = UserMapper.updateImage(userModel, userDto);
         log.info("Updating image");
         userRepository.save(userModel);
-        BeanUtils.copyProperties(userModel, userDto);
-        return userDto;
+        var userResponse = new UserReponse();
+        BeanUtils.copyProperties(userModel, userResponse);
+        return userResponse;
     }
 
     private UserModel findById(UUID userId) {

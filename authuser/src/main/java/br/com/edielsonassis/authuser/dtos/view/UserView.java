@@ -6,5 +6,4 @@ public interface UserView {
     public static interface userPut{}
     public static interface passwordPut{}
     public static interface imagePut{}
-    public static interface publicGet{} 
 }
