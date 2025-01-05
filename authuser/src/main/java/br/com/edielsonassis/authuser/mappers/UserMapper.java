@@ -1,4 +1,4 @@
-package br.com.edielsonassis.authuser.mapper;
+package br.com.edielsonassis.authuser.mappers;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;

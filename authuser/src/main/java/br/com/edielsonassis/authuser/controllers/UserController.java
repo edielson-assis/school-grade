@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
+import br.com.edielsonassis.authuser.dtos.PageUserDto;
 import br.com.edielsonassis.authuser.dtos.UserDto;
 import br.com.edielsonassis.authuser.dtos.view.UserView;
 import br.com.edielsonassis.authuser.services.UserService;
+import br.com.edielsonassis.authuser.specifications.SpecificationTemplate;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -30,12 +32,12 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    @JsonView(UserView.publicGet.class)
-    public ResponseEntity<Page<UserDto>> getAllUsers(
+    public ResponseEntity<Page<PageUserDto>> getAllUsers(
+            SpecificationTemplate.UserSpecification spec,
 			@RequestParam(defaultValue = "0") Integer page, 
 			@RequestParam(defaultValue = "10") Integer size, 
 			@RequestParam(defaultValue = "asc") String direction) {
-        var users = userService.findAllUsers(page, size, direction);
+        var users = userService.findAllUsers(page, size, direction, spec);
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 

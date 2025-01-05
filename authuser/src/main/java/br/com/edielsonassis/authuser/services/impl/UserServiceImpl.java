@@ -7,11 +7,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.edielsonassis.authuser.dtos.PageUserDto;
 import br.com.edielsonassis.authuser.dtos.UserDto;
-import br.com.edielsonassis.authuser.mapper.UserMapper;
+import br.com.edielsonassis.authuser.mappers.UserMapper;
 import br.com.edielsonassis.authuser.models.UserModel;
 import br.com.edielsonassis.authuser.repositories.UserRepository;
 import br.com.edielsonassis.authuser.services.UserService;
@@ -41,13 +43,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserDto> findAllUsers(Integer page, Integer size, String direction) {
+    public Page<PageUserDto> findAllUsers(Integer page, Integer size, String direction, Specification<UserModel> spec) {
         var sortDirection = "desc".equalsIgnoreCase(direction) ? Direction.DESC : Direction.ASC;
-		var pageable = PageRequest.of(page, size, Sort.by(sortDirection, "userName"));
+		var pageable = PageRequest.of(page, size, Sort.by(sortDirection, "userId"));
         log.info("Listing all users");
-        return userRepository.findAll(pageable).map(UserModel -> {
-            var userDto = new UserDto();
-            BeanUtils.copyProperties(UserModel, userDto);
+        return userRepository.findAll(spec, pageable).map(userModel -> {
+            var userDto = new PageUserDto();
+            BeanUtils.copyProperties(userModel, userDto);
             return userDto;
         });
     }
