@@ -40,6 +40,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userModel);
         var userResponse = new UserReponse();
         BeanUtils.copyProperties(userModel, userResponse);
+        getFormattedEnumValue(userModel, userResponse);
         return userResponse;
     }
 
@@ -51,6 +52,7 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll(spec, pageable).map(userModel -> {
             var userResponse = new UserReponse();
             BeanUtils.copyProperties(userModel, userResponse);
+            getFormattedEnumValue(userModel, userResponse);
             return userResponse;
         });
     }
@@ -60,6 +62,7 @@ public class UserServiceImpl implements UserService {
         var userModel = findById(userId);
         var userResponse = new UserReponse();
         BeanUtils.copyProperties(userModel, userResponse);
+        getFormattedEnumValue(userModel, userResponse);
         return userResponse;
     }
 
@@ -81,9 +84,11 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userModel);
         var userResponse = new UserReponse();
         BeanUtils.copyProperties(userModel, userResponse);
+        getFormattedEnumValue(userModel, userResponse);
         return userResponse;
     }
 
+    @Transactional
     @Override
     public String updateUserPasswordById(UUID userId, UserRequest userDto) {
         var userModel = findById(userId);
@@ -93,6 +98,7 @@ public class UserServiceImpl implements UserService {
         return "Password updated successfully";
     }
 
+    @Transactional
     @Override
     public UserReponse updateUserImageById(UUID userId, UserRequest userDto) {
         var userModel = findById(userId);
@@ -101,6 +107,7 @@ public class UserServiceImpl implements UserService {
         userRepository.save(userModel);
         var userResponse = new UserReponse();
         BeanUtils.copyProperties(userModel, userResponse);
+        getFormattedEnumValue(userModel, userResponse);
         return userResponse;
     }
 
@@ -137,5 +144,10 @@ public class UserServiceImpl implements UserService {
             log.error("CPF already exists: {}", user.getCpf());
             throw new ValidationException("CPF already exists");
         }
+    }
+
+    private void getFormattedEnumValue(UserModel userModel, UserReponse userResponse) {
+        userResponse.setUserStatus(userModel.getUserStatus().getStatus());
+        userResponse.setUserType(userModel.getUserType().getType());
     }
 }

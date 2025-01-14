@@ -1,31 +1,31 @@
 # Server settings
 server:
-  port: 8087
+  port: ${SERVER_PORT:8087}
 
 # Spring settings
 spring:
   application:
-    name: authuser
+    name: authuser-service
 
 # Spring datasource settings
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/authuser?useTimezone=true&serverTimezone=UTC
-    username: postgres
-    password: 1234567
+    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:authuser}?useTimezone=true&serverTimezone=UTC
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:1234567}
 
 # Spring JPA settings
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
-    open-in-view: false
+      ddl-auto: none
+      show-sql: false
+      open-in-view: false
 
 # Spring flyway settings
   flyway:
-    url: jdbc:postgresql://localhost:5432/authuser?useTimezone=true&serverTimezone=UTC
-    user: postgres
-    password: 1234567
+    url: jdbc:postgresql://${DATABASE_HOST:localhost}:${DATABASE_PORT:5432}/${DATABASE_NAME:authuser}?useTimezone=true&serverTimezone=UTC
+    user: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:1234567}
 
 # Spring jackson settings
   jackson:

@@ -9,8 +9,6 @@ import org.springframework.hateoas.RepresentationModel;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import br.com.edielsonassis.authuser.models.enums.UserStatus;
-import br.com.edielsonassis.authuser.models.enums.UserType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,8 +24,8 @@ public class UserReponse extends RepresentationModel<UserReponse> implements Ser
     private String phoneNumber;
     private String cpf;
     private String imgUrl;
-    private UserStatus userStatus;
-    private UserType userType;
+    private String userStatus;
+    private String userType;
     
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy'T'HH:mm:ss'Z'")
     private LocalDateTime creationDate;
