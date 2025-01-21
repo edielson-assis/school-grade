@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
-import br.com.edielsonassis.authuser.dtos.UserReponse;
+import br.com.edielsonassis.authuser.dtos.UserResponse;
 import br.com.edielsonassis.authuser.dtos.UserRequest;
 import br.com.edielsonassis.authuser.dtos.view.UserView;
 import br.com.edielsonassis.authuser.services.UserService;
@@ -27,7 +27,7 @@ public class AuthenticationController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserReponse> registerUser(
+    public ResponseEntity<UserResponse> registerUser(
             @RequestBody @Validated(UserView.registrationPost.class) 
             @JsonView(UserView.registrationPost.class) UserRequest userDto) {
         var user = userService.saveUser(userDto);

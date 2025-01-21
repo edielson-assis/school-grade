@@ -16,7 +16,7 @@ public class UserMapper {
     
     private UserMapper() {}
 
-    public static UserModel convertDtoToModel(UserRequest userDto) {
+    public static UserModel toEntity(UserRequest userDto) {
         var userModel = new UserModel();
         BeanUtils.copyProperties(userDto, userModel);
         userModel.setUserStatus(UserStatus.ACTIVE);
@@ -26,20 +26,20 @@ public class UserMapper {
         return userModel;
     }
 
-    public static UserModel updateUser(UserModel userModel, UserRequest userDto) {
+    public static UserModel toEntity(UserModel userModel, UserRequest userDto) {
         userModel.setFullName(userDto.getFullName());
         userModel.setPhoneNumber(userDto.getPhoneNumber());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
         return userModel;
     }
 
-    public static UserModel updatePassword(UserModel userModel, UserRequest userDto) {
+    public static UserModel toEntityPassword(UserModel userModel, UserRequest userDto) {
         userModel.setPassword(userDto.getPassword());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
         return userModel;
     }
 
-    public static UserModel updateImage(UserModel userModel, UserRequest userDto) {
+    public static UserModel toEntityImage(UserModel userModel, UserRequest userDto) {
         userModel.setImgUrl(userDto.getImgUrl());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
         return userModel;

@@ -11,7 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.edielsonassis.authuser.dtos.UserReponse;
+import br.com.edielsonassis.authuser.dtos.UserResponse;
 import br.com.edielsonassis.authuser.dtos.UserRequest;
 import br.com.edielsonassis.authuser.mappers.UserMapper;
 import br.com.edielsonassis.authuser.models.UserModel;
@@ -31,26 +31,26 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserReponse saveUser(UserRequest userDto) {
-        var userModel = UserMapper.convertDtoToModel(userDto);
+    public UserResponse saveUser(UserRequest userDto) {
+        var userModel = UserMapper.toEntity(userDto);
         validateUserNameNotExists(userModel);
         validateEmailNotExists(userModel);
         validateCpfNotExists(userModel);
         log.info("Registering a new User: {}", userModel.getUserName());
         userRepository.save(userModel);
-        var userResponse = new UserReponse();
+        var userResponse = new UserResponse();
         BeanUtils.copyProperties(userModel, userResponse);
         getFormattedEnumValue(userModel, userResponse);
         return userResponse;
     }
 
     @Override
-    public Page<UserReponse> findAllUsers(Integer page, Integer size, String direction, Specification<UserModel> spec) {
+    public Page<UserResponse> findAllUsers(Integer page, Integer size, String direction, Specification<UserModel> spec) {
         var sortDirection = "desc".equalsIgnoreCase(direction) ? Direction.DESC : Direction.ASC;
 		var pageable = PageRequest.of(page, size, Sort.by(sortDirection, "userId"));
         log.info("Listing all users");
         return userRepository.findAll(spec, pageable).map(userModel -> {
-            var userResponse = new UserReponse();
+            var userResponse = new UserResponse();
             BeanUtils.copyProperties(userModel, userResponse);
             getFormattedEnumValue(userModel, userResponse);
             return userResponse;
@@ -58,9 +58,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserReponse findUserById(UUID userId) {
+    public UserResponse findUserById(UUID userId) {
         var userModel = findById(userId);
-        var userResponse = new UserReponse();
+        var userResponse = new UserResponse();
         BeanUtils.copyProperties(userModel, userResponse);
         getFormattedEnumValue(userModel, userResponse);
         return userResponse;
@@ -77,12 +77,12 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserReponse updateUserById(UUID userId, UserRequest userDto) {
+    public UserResponse updateUserById(UUID userId, UserRequest userDto) {
         var userModel = findById(userId);
-        userModel = UserMapper.updateUser(userModel, userDto);
+        userModel = UserMapper.toEntity(userModel, userDto);
         log.info("Updating user with id: {}", userId);
         userRepository.save(userModel);
-        var userResponse = new UserReponse();
+        var userResponse = new UserResponse();
         BeanUtils.copyProperties(userModel, userResponse);
         getFormattedEnumValue(userModel, userResponse);
         return userResponse;
@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public String updateUserPasswordById(UUID userId, UserRequest userDto) {
         var userModel = findById(userId);
-        userModel = UserMapper.updatePassword(userModel, userDto);
+        userModel = UserMapper.toEntityPassword(userModel, userDto);
         log.info("Updating password");
         userRepository.save(userModel);
         return "Password updated successfully";
@@ -100,12 +100,12 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public UserReponse updateUserImageById(UUID userId, UserRequest userDto) {
+    public UserResponse updateUserImageById(UUID userId, UserRequest userDto) {
         var userModel = findById(userId);
-        userModel = UserMapper.updateImage(userModel, userDto);
+        userModel = UserMapper.toEntityImage(userModel, userDto);
         log.info("Updating image");
         userRepository.save(userModel);
-        var userResponse = new UserReponse();
+        var userResponse = new UserResponse();
         BeanUtils.copyProperties(userModel, userResponse);
         getFormattedEnumValue(userModel, userResponse);
         return userResponse;
@@ -146,7 +146,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void getFormattedEnumValue(UserModel userModel, UserReponse userResponse) {
+    private void getFormattedEnumValue(UserModel userModel, UserResponse userResponse) {
         userResponse.setUserStatus(userModel.getUserStatus().getStatus());
         userResponse.setUserType(userModel.getUserType().getType());
     }

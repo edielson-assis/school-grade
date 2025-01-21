@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
-import br.com.edielsonassis.authuser.dtos.UserReponse;
+import br.com.edielsonassis.authuser.dtos.UserResponse;
 import br.com.edielsonassis.authuser.dtos.UserRequest;
 import br.com.edielsonassis.authuser.dtos.view.UserView;
 import br.com.edielsonassis.authuser.services.UserService;
@@ -35,7 +35,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<Page<UserReponse>> getAllUsers(
+    public ResponseEntity<Page<UserResponse>> getAllUsers(
             SpecificationTemplate.UserSpecification spec,
 			@RequestParam(defaultValue = "0") Integer page, 
 			@RequestParam(defaultValue = "10") Integer size, 
@@ -47,7 +47,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<UserReponse> getOneUser(@PathVariable UUID userId) {
+    public ResponseEntity<UserResponse> getOneUser(@PathVariable UUID userId) {
         var user = userService.findUserById(userId);
         user.add(linkTo(methodOn(UserController.class).getOneUser(userId)).withSelfRel());
         return new ResponseEntity<>(user, HttpStatus.OK);
@@ -60,7 +60,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<UserReponse> updateUser(@PathVariable UUID userId,
+    public ResponseEntity<UserResponse> updateUser(@PathVariable UUID userId,
             @RequestBody @Validated(UserView.userPut.class) 
             @JsonView(UserView.userPut.class) UserRequest userDto) {
         var user = userService.updateUserById(userId, userDto);
@@ -77,7 +77,7 @@ public class UserController {
     }
 
     @PutMapping("/{userId}/image")
-    public ResponseEntity<UserReponse> updateImage(@PathVariable UUID userId,
+    public ResponseEntity<UserResponse> updateImage(@PathVariable UUID userId,
             @RequestBody @Validated(UserView.imagePut.class) 
             @JsonView(UserView.imagePut.class) UserRequest userDto) {
         var user = userService.updateUserImageById(userId, userDto);

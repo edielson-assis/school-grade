@@ -3,7 +3,6 @@ package br.com.edielsonassis.authuser.dtos;
 import java.io.Serializable;
 
 import org.hibernate.validator.constraints.br.CPF;
-import org.springframework.hateoas.RepresentationModel;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
@@ -18,7 +17,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserRequest extends RepresentationModel<UserRequest> implements Serializable {
+public class UserRequest implements Serializable {
 
     @UsernameValidator(groups = {UserView.registrationPost.class})
     @NotBlank(message = "UserName is required", groups = {UserView.registrationPost.class})
