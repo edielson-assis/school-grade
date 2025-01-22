@@ -17,9 +17,7 @@ public interface CourseService {
     
     CourseResponse findCourseById(UUID courseId);
 
-    void deleteCourseById(UUID courseId);
+    String deleteCourseById(UUID courseId);
 
     CourseResponse updateCourseById(UUID courseId, CourseRequest courseRequest);
-
-    CourseResponse updateCourseImageById(UUID courseId, CourseRequest courseRequest);
 }

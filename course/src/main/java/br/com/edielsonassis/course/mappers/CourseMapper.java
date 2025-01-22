@@ -29,15 +29,10 @@ public class CourseMapper {
     public static CourseModel toEntity(CourseModel courseModel, CourseRequest courseRequest) {
         courseModel.setName(courseRequest.getName());
         courseModel.setDescription(courseRequest.getDescription());
+        courseModel.setImageUrl(courseRequest.getImageUrl());
         courseModel.setCourseStatus(CourseStatus.valueOf(courseRequest.getCourseStatus().toUpperCase()));
         courseModel.setCourseLevel(CourseLevel.valueOf(courseRequest.getCourseLevel().toUpperCase()));
 		courseModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
-        return courseModel;
-    }
-
-    public static CourseModel toEntityImage(CourseModel courseModel, CourseRequest courseRequest) {
-        courseModel.setImageUrl(courseRequest.getImageUrl());
-        courseModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
         return courseModel;
     }
 }

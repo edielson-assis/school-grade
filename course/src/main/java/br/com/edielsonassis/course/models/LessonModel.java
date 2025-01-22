@@ -4,14 +4,13 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
@@ -38,13 +37,13 @@ public class LessonModel implements Serializable {
 	@Column(nullable = false, length = 255)
 	private String description;
 	
-	@Column(nullable = false, name = "video_url")
+	@Column(nullable = false, name = "video_url", length = 255)
 	private String videoUrl;
 	
 	@Column(nullable = false, name = "creation_date")
 	private LocalDateTime creationDate;
 	
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
-	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	@JoinColumn(name = "module_id", nullable = false)
 	private ModuleModel module;
 }

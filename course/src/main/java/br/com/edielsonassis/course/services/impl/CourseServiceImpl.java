@@ -68,7 +68,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Transactional
     @Override
-    public void deleteCourseById(UUID courseId) {
+    public String deleteCourseById(UUID courseId) {
         var course = findById(courseId);
         var modules = moduleRepository.findAllModulesIntoCourse(course.getCourseId());
         
@@ -86,6 +86,7 @@ public class CourseServiceImpl implements CourseService {
         }
         log.info("Deleting course with id: {}", courseId);
         courseRepository.delete(course);
+        return "Course deleted successfully";
     }
 
     @Transactional
@@ -94,19 +95,6 @@ public class CourseServiceImpl implements CourseService {
         var courseModel = findById(courseId);
         courseModel = CourseMapper.toEntity(courseModel, courseRequest);
         log.info("Updating course with id: {}", courseId);
-        courseRepository.save(courseModel);
-        var courseResponse = new CourseResponse();
-        BeanUtils.copyProperties(courseModel, courseResponse);
-        getFormattedEnumValue(courseModel, courseResponse);
-        return courseResponse;
-    }
-
-    @Transactional
-    @Override
-    public CourseResponse updateCourseImageById(UUID courseId, CourseRequest courseRequest) {
-        var courseModel = findById(courseId);
-        courseModel = CourseMapper.toEntityImage(courseModel, courseRequest);
-        log.info("Updating image");
         courseRepository.save(courseModel);
         var courseResponse = new CourseResponse();
         BeanUtils.copyProperties(courseModel, courseResponse);

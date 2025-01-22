@@ -2,7 +2,11 @@ package br.com.edielsonassis.course.models;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Set;
 import java.util.UUID;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import br.com.edielsonassis.course.models.enums.CourseLevel;
 import br.com.edielsonassis.course.models.enums.CourseStatus;
@@ -10,9 +14,11 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -38,7 +44,7 @@ public class CourseModel implements Serializable {
 	@Column(nullable = false, length = 255)
 	private String description;
 	
-	@Column(name = "image_url")
+	@Column(name = "image_url", length = 255)
 	private String imageUrl;
 	
 	@Column(nullable = false, name = "creation_date")
@@ -57,4 +63,8 @@ public class CourseModel implements Serializable {
 	
 	@Column(nullable = false, name = "user_instructor")
 	private UUID userInstructor;
+
+	@Fetch(FetchMode.SUBSELECT)
+	@OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+	private Set<ModuleModel> modules;
 }

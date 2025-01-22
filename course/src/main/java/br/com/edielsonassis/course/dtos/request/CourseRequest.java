@@ -23,8 +23,7 @@ public class CourseRequest implements Serializable {
     @JsonView({CourseView.registrationPost.class, CourseView.coursePut.class})
 	private String description;
 
-	@NotBlank(message = "ImageUrl is required", groups = {CourseView.imagePut.class})
-	@JsonView(CourseView.imagePut.class)
+	@JsonView({CourseView.registrationPost.class, CourseView.coursePut.class})
 	private String imageUrl;
 	
 	@NotBlank(message = "CourseStatus is required", groups = {CourseView.registrationPost.class, CourseView.coursePut.class})
