@@ -18,8 +18,8 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-      show-sql: false
-      open-in-view: false
+    show-sql: false
+    open-in-view: false
 
 # Spring flyway settings
   flyway:
