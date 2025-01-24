@@ -53,7 +53,6 @@ public class ModuleServiceImpl implements ModuleService {
         return moduleRepository.findAll(spec, pageable).map(moduleModel -> {
             var moduleResponse = new ModuleResponse();
             BeanUtils.copyProperties(moduleModel, moduleResponse);
-
             return moduleResponse;
         });
     }
@@ -67,7 +66,7 @@ public class ModuleServiceImpl implements ModuleService {
     }
 
     @Override
-    public String delteModuleById(UUID courseId, UUID moduleId) {
+    public String deleteModuleById(UUID courseId, UUID moduleId) {
         var module = getModuleById(courseId, moduleId);
         var lessons = lessonRepository.findAllLessonsIntoModule(module.getModuleId());
 		

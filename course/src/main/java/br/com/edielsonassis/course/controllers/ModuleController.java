@@ -27,12 +27,12 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/course")
+@RequestMapping("/course/{courseId}/module")
 public class ModuleController {
     
     private final ModuleService moduleService;
 
-    @PostMapping("/{courseId}/module")
+    @PostMapping
     public ResponseEntity<ModuleResponse> registerModule(
             @PathVariable UUID courseId,
             @RequestBody @Validated(ModuleView.registrationPost.class) 
@@ -41,7 +41,7 @@ public class ModuleController {
         return new ResponseEntity<>(module, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{courseId}/module")
+    @GetMapping
     public ResponseEntity<Page<ModuleResponse>> getAllModules(
             @PathVariable UUID courseId,
             SpecificationTemplete.ModuleSpecification spec,
@@ -52,13 +52,13 @@ public class ModuleController {
         return new ResponseEntity<>(modules, HttpStatus.OK);
     }
 
-    @GetMapping("/{courseId}/module/{moduleId}")
+    @GetMapping("/{moduleId}")
     public ResponseEntity<ModuleResponse> getOneModule(@PathVariable UUID courseId, @PathVariable UUID moduleId) {
         var module = moduleService.findModuleById(courseId, moduleId);
         return new ResponseEntity<>(module, HttpStatus.OK);
     }
 
-    @PutMapping("/{courseId}/module/{moduleId}")
+    @PutMapping("/{moduleId}")
     public ResponseEntity<ModuleResponse> updateModule(
             @PathVariable UUID courseId,
             @PathVariable UUID moduleId,
@@ -68,9 +68,9 @@ public class ModuleController {
         return new ResponseEntity<>(module, HttpStatus.OK);
     }   
 
-    @DeleteMapping("/{courseId}/module/{moduleId}")
+    @DeleteMapping("/{moduleId}")
     public ResponseEntity<String> deleteModule(@PathVariable UUID courseId, @PathVariable UUID moduleId) {
-        var module = moduleService.delteModuleById(courseId, moduleId);
+        var module = moduleService.deleteModuleById(courseId, moduleId);
         return new ResponseEntity<>(module, HttpStatus.OK);
     }
 }

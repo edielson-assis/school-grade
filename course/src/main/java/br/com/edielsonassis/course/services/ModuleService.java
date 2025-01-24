@@ -17,7 +17,7 @@ public interface ModuleService {
     
     ModuleResponse findModuleById(UUID courseId, UUID moduleId);
     
-    String delteModuleById(UUID courseId, UUID moduleId);
+    String deleteModuleById(UUID courseId, UUID moduleId);
 
     ModuleResponse updateModuleById(UUID courseId, UUID moduleId, ModuleRequest moduleRequest);
 }
