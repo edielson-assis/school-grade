@@ -34,7 +34,7 @@ public class LessonServiceImpl implements LessonService {
     public LessonResponse saveLesson(UUID moduleId, LessonRequest lessonRequest) {
         var module = findModuleById(moduleId);
         var lessonModel = LessonMapper.toEntity(lessonRequest, module);
-        log.info("Registering a new Module: {}", lessonModel.getTitle());
+        log.info("Registering a new Lesson: {}", lessonModel.getTitle());
 		lessonRepository.save(lessonModel);
         var lessonResponse = new LessonResponse();
         BeanUtils.copyProperties(lessonModel, lessonResponse);
@@ -65,7 +65,7 @@ public class LessonServiceImpl implements LessonService {
     public LessonResponse updateLessonById(UUID moduleId, UUID lessonId, LessonRequest lessonRequest) {
         var lessonModel = getLessonById(moduleId, lessonId);
         lessonModel = LessonMapper.toEntity(lessonModel, lessonRequest);
-        log.info("Updating module with id: {}", lessonId);
+        log.info("Updating lesson with id: {}", lessonId);
         lessonRepository.save(lessonModel);
         var lessonResponse = new LessonResponse();
         BeanUtils.copyProperties(lessonModel, lessonResponse);
@@ -81,7 +81,7 @@ public class LessonServiceImpl implements LessonService {
     }
 
     private LessonModel getLessonById(UUID moduleId, UUID lessonId) {
-        log.info("Verifying module by id: {}", lessonId);
+        log.info("Verifying lesson by id: {}", lessonId);
         return lessonRepository.findLessonIntoModule(moduleId, lessonId).orElseThrow(() -> {
             log.error("Lesson not found: {}", lessonId);
             return new ObjectNotFoundException("Lesson not found: " + lessonId);

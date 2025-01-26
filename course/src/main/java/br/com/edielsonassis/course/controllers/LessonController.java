@@ -1,5 +1,8 @@
 package br.com.edielsonassis.course.controllers;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -38,6 +41,7 @@ public class LessonController {
             @RequestBody @Validated(LessonView.registrationPost.class) 
             @JsonView(LessonView.registrationPost.class) LessonRequest lessonDto) {
         var lesson = lessonService.saveLesson(moduleId, lessonDto);
+        lesson.add(linkTo(methodOn(LessonController.class).getOneLesson(moduleId, lesson.getLessonId())).withSelfRel());
         return new ResponseEntity<>(lesson, HttpStatus.CREATED);
     }
 
@@ -49,12 +53,15 @@ public class LessonController {
 			@RequestParam(defaultValue = "10") Integer size, 
 			@RequestParam(defaultValue = "asc") String direction) {
         var lessons = lessonService.findAllLessons(page, size, direction, SpecificationTemplete.lessonModuleId(moduleId).and(spec));
+        lessons.stream().forEach(lesson -> lesson.add(linkTo(methodOn(LessonController.class).getOneLesson(moduleId, lesson.getLessonId())).withSelfRel()));
+        lessons.forEach(lesson -> lesson.add(linkTo(methodOn(LessonController.class).getAllLessons(moduleId, spec, page, size, direction)).withRel("lessons")));
         return new ResponseEntity<>(lessons, HttpStatus.OK);
     }
 
     @GetMapping("/{lessonId}")
     public ResponseEntity<LessonResponse> getOneLesson(@PathVariable UUID moduleId, @PathVariable UUID lessonId) {
         var lesson = lessonService.findLessonById(moduleId, lessonId);
+        lesson.add(linkTo(methodOn(LessonController.class).getOneLesson(moduleId, lesson.getLessonId())).withSelfRel());
         return new ResponseEntity<>(lesson, HttpStatus.OK);
     }
 
@@ -65,6 +72,7 @@ public class LessonController {
             @RequestBody @Validated(LessonView.lessonPut.class) 
             @JsonView(LessonView.lessonPut.class) LessonRequest lessonDto) {
         var lesson = lessonService.updateLessonById(moduleId, lessonId, lessonDto);
+        lesson.add(linkTo(methodOn(LessonController.class).getOneLesson(moduleId, lesson.getLessonId())).withSelfRel());
         return new ResponseEntity<>(lesson, HttpStatus.OK);
     }   
 

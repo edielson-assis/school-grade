@@ -1,5 +1,8 @@
 package br.com.edielsonassis.course.controllers;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -38,6 +41,7 @@ public class ModuleController {
             @RequestBody @Validated(ModuleView.registrationPost.class) 
             @JsonView(ModuleView.registrationPost.class) ModuleRequest moduleDto) {
         var module = moduleService.saveModule(courseId, moduleDto);
+        module.add(linkTo(methodOn(ModuleController.class).getOneModule(courseId, module.getModuleId())).withSelfRel());
         return new ResponseEntity<>(module, HttpStatus.CREATED);
     }
 
@@ -49,12 +53,15 @@ public class ModuleController {
 			@RequestParam(defaultValue = "10") Integer size, 
 			@RequestParam(defaultValue = "asc") String direction) {
         var modules = moduleService.findAllModules(page, size, direction, SpecificationTemplete.moduleCourseId(courseId).and(spec));
+        modules.stream().forEach(module -> module.add(linkTo(methodOn(ModuleController.class).getOneModule(courseId, module.getModuleId())).withSelfRel()));
+        modules.forEach(module -> module.add(linkTo(methodOn(ModuleController.class).getAllModules(courseId, spec, page, size, direction)).withRel("modules")));
         return new ResponseEntity<>(modules, HttpStatus.OK);
     }
 
     @GetMapping("/{moduleId}")
     public ResponseEntity<ModuleResponse> getOneModule(@PathVariable UUID courseId, @PathVariable UUID moduleId) {
         var module = moduleService.findModuleById(courseId, moduleId);
+        module.add(linkTo(methodOn(ModuleController.class).getOneModule(courseId, module.getModuleId())).withSelfRel());
         return new ResponseEntity<>(module, HttpStatus.OK);
     }
 
@@ -65,6 +72,7 @@ public class ModuleController {
             @RequestBody @Validated(ModuleView.modulePut.class) 
             @JsonView(ModuleView.modulePut.class) ModuleRequest moduleDto) {
         var module = moduleService.updateModuleById(courseId, moduleId, moduleDto);
+        module.add(linkTo(methodOn(ModuleController.class).getOneModule(courseId, module.getModuleId())).withSelfRel());
         return new ResponseEntity<>(module, HttpStatus.OK);
     }   
 

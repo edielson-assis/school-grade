@@ -1,5 +1,8 @@
 package br.com.edielsonassis.course.controllers;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -37,6 +40,7 @@ public class CourseController {
             @RequestBody @Validated(CourseView.registrationPost.class) 
             @JsonView(CourseView.registrationPost.class) CourseRequest courseDto) {
         var course = courseService.saveCourse(courseDto);
+        course.add(linkTo(methodOn(CourseController.class).getOneCourse(course.getCourseId())).withSelfRel());
         return new ResponseEntity<>(course, HttpStatus.CREATED);
     }
 
@@ -47,12 +51,15 @@ public class CourseController {
 			@RequestParam(defaultValue = "10") Integer size, 
 			@RequestParam(defaultValue = "asc") String direction) {
         var courses = courseService.findAllCourses(page, size, direction, spec);
+        courses.stream().forEach(course -> course.add(linkTo(methodOn(CourseController.class).getOneCourse(course.getCourseId())).withSelfRel()));
+        courses.forEach(course -> course.add(linkTo(methodOn(CourseController.class).getAllCourses(spec, page, size, direction)).withRel("courses")));
         return new ResponseEntity<>(courses, HttpStatus.OK);
     }
 
     @GetMapping("/{courseId}")
     public ResponseEntity<CourseResponse> getOneCourse(@PathVariable UUID courseId) {
         var course = courseService.findCourseById(courseId);
+        course.add(linkTo(methodOn(CourseController.class).getOneCourse(course.getCourseId())).withSelfRel());
         return new ResponseEntity<>(course, HttpStatus.OK);
     }
 
@@ -61,6 +68,7 @@ public class CourseController {
             @RequestBody @Validated(CourseView.coursePut.class) 
             @JsonView(CourseView.coursePut.class) CourseRequest courseDto) {
         var course = courseService.updateCourseById(courseId, courseDto);
+        course.add(linkTo(methodOn(CourseController.class).getOneCourse(course.getCourseId())).withSelfRel());
         return new ResponseEntity<>(course, HttpStatus.OK);
     }   
 
