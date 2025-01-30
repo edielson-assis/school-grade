@@ -1,6 +1,6 @@
 # Server settings
 server:
-  port: ${SERVER_PORT:8061}
+  port: ${SERVER_PORT:8761}
 
 # Spring settings
 spring:
