@@ -1,5 +1,8 @@
+# Server settings
 server:
-  port: 8761
+  port: ${SERVER_PORT:8061}
+
+# Spring settings
 spring:
   application:
     name: service-registry
