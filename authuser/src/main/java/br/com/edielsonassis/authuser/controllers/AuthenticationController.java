@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 
-import br.com.edielsonassis.authuser.dtos.UserResponse;
-import br.com.edielsonassis.authuser.dtos.UserRequest;
+import br.com.edielsonassis.authuser.dtos.request.UserRequest;
+import br.com.edielsonassis.authuser.dtos.response.UserResponse;
 import br.com.edielsonassis.authuser.dtos.view.UserView;
 import br.com.edielsonassis.authuser.services.UserService;
 import lombok.AllArgsConstructor;

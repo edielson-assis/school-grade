@@ -11,10 +11,12 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.edielsonassis.authuser.dtos.UserResponse;
-import br.com.edielsonassis.authuser.dtos.UserRequest;
+import br.com.edielsonassis.authuser.dtos.request.UserRequest;
+import br.com.edielsonassis.authuser.dtos.response.UserResponse;
 import br.com.edielsonassis.authuser.mappers.UserMapper;
 import br.com.edielsonassis.authuser.models.UserModel;
+import br.com.edielsonassis.authuser.models.enums.ActionType;
+import br.com.edielsonassis.authuser.publishers.UserEventPublisher;
 import br.com.edielsonassis.authuser.repositories.UserRepository;
 import br.com.edielsonassis.authuser.services.UserService;
 import br.com.edielsonassis.authuser.services.exceptions.ObjectNotFoundException;
@@ -28,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceImpl implements UserService {
    
     private final UserRepository userRepository;
+    private final UserEventPublisher eventPublisher;
 
     @Transactional
     @Override
@@ -38,6 +41,7 @@ public class UserServiceImpl implements UserService {
         validateCpfNotExists(userModel);
         log.info("Registering a new User: {}", userModel.getUserName());
         userRepository.save(userModel);
+        publishUserEvent(userModel);
         var userResponse = new UserResponse();
         BeanUtils.copyProperties(userModel, userResponse);
         getFormattedEnumValue(userModel, userResponse);
@@ -149,5 +153,11 @@ public class UserServiceImpl implements UserService {
     private void getFormattedEnumValue(UserModel userModel, UserResponse userResponse) {
         userResponse.setUserStatus(userModel.getUserStatus().getStatus());
         userResponse.setUserType(userModel.getUserType().getType());
+    }
+
+    private void publishUserEvent(UserModel userModel) {
+        log.info("Publishing event");
+        var userEventRequest = UserMapper.toDto(userModel);
+        eventPublisher.publishUserEvent(userEventRequest, ActionType.CREATE);
     }
 }

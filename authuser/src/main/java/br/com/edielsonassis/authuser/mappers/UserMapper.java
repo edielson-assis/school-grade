@@ -5,7 +5,8 @@ import java.time.ZoneId;
 
 import org.springframework.beans.BeanUtils;
 
-import br.com.edielsonassis.authuser.dtos.UserRequest;
+import br.com.edielsonassis.authuser.dtos.request.UserEventRequest;
+import br.com.edielsonassis.authuser.dtos.request.UserRequest;
 import br.com.edielsonassis.authuser.models.UserModel;
 import br.com.edielsonassis.authuser.models.enums.UserStatus;
 import br.com.edielsonassis.authuser.models.enums.UserType;
@@ -43,5 +44,13 @@ public class UserMapper {
         userModel.setImgUrl(userDto.getImgUrl());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
         return userModel;
+    }
+
+    public static UserEventRequest toDto(UserModel userModel) {
+        var userEventRequest = new UserEventRequest();
+        BeanUtils.copyProperties(userModel, userEventRequest);
+        userEventRequest.setUserStatus(userModel.getUserStatus().name());
+        userEventRequest.setUserType(userModel.getUserType().name());
+        return userEventRequest;
     }
 }

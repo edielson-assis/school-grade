@@ -1,4 +1,4 @@
-package br.com.edielsonassis.authuser.dtos;
+package br.com.edielsonassis.authuser.dtos.response;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

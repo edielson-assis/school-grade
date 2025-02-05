@@ -1,4 +1,4 @@
-package br.com.edielsonassis.authuser.dtos;
+package br.com.edielsonassis.authuser.dtos.request;
 
 import java.io.Serializable;
 

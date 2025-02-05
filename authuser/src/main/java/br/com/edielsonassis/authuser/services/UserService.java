@@ -5,8 +5,8 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 
-import br.com.edielsonassis.authuser.dtos.UserResponse;
-import br.com.edielsonassis.authuser.dtos.UserRequest;
+import br.com.edielsonassis.authuser.dtos.request.UserRequest;
+import br.com.edielsonassis.authuser.dtos.response.UserResponse;
 import br.com.edielsonassis.authuser.models.UserModel;
 
 public interface UserService {
