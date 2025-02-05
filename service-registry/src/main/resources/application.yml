@@ -6,6 +6,13 @@ server:
 spring:
   application:
     name: service-registry
+
+# Spring ansi settings
+  output:
+    ansi:
+      enabled: always
+
+# Eureka settings
 eureka:
   client:
     register-with-eureka: false

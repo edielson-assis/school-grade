@@ -12,6 +12,13 @@ eureka:
 spring:
   application:
     name: api-gateway
+
+# Spring ansi settings
+  output:
+    ansi:
+      enabled: always
+
+# Gateway settings
   cloud:
     gateway:
       discovery:
