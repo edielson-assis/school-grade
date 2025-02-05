@@ -49,10 +49,11 @@ public class CourseController {
             SpecificationTemplete.CourseSpecification spec,
 			@RequestParam(defaultValue = "0") Integer page, 
 			@RequestParam(defaultValue = "10") Integer size, 
-			@RequestParam(defaultValue = "asc") String direction) {
-        var courses = courseService.findAllCourses(page, size, direction, spec);
+			@RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(required = false) UUID userId) {
+        var courses = courseService.findAllCourses(page, size, direction, SpecificationTemplete.courseUserId(userId).and(spec));
         courses.stream().forEach(course -> course.add(linkTo(methodOn(CourseController.class).getOneCourse(course.getCourseId())).withSelfRel()));
-        courses.forEach(course -> course.add(linkTo(methodOn(CourseController.class).getAllCourses(spec, page, size, direction)).withRel("courses")));
+        courses.forEach(course -> course.add(linkTo(methodOn(CourseController.class).getAllCourses(spec, page, size, direction, userId)).withRel("courses")));
         return new ResponseEntity<>(courses, HttpStatus.OK);
     }
 
