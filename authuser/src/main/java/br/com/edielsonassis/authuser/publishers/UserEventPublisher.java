@@ -10,7 +10,7 @@ import br.com.edielsonassis.authuser.models.enums.ActionType;
 @Component
 public class UserEventPublisher {
 
-	@Value(value = "${schoolgrade.broker.exchange.userEvent}")
+	@Value(value = "${schoolgrade.broker.exchange.userEventExchange}")
 	private String exchangeUserEvent;
     
 	private final RabbitTemplate rabbitTemplate; 

@@ -10,7 +10,6 @@ import lombok.Setter;
 public class UserEventRequest {
     
     private UUID userId;
-	private String username;
 	private String email;
 	private String fullName;
 	private String userStatus;

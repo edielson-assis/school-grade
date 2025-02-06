@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
         validateCpfNotExists(userModel);
         log.info("Registering a new User: {}", userModel.getUserName());
         userRepository.save(userModel);
-        publishUserEvent(userModel);
+        publishUserEvent(userModel, ActionType.CREATE);
         var userResponse = new UserResponse();
         BeanUtils.copyProperties(userModel, userResponse);
         getFormattedEnumValue(userModel, userResponse);
@@ -76,6 +76,7 @@ public class UserServiceImpl implements UserService {
         var user = findById(userId);
         log.info("Deleting user with id: {}", user.getUserId());
         userRepository.delete(user);
+        publishUserEvent(user, ActionType.DELETE);
         return "User deleted successfully";
     }
 
@@ -86,6 +87,7 @@ public class UserServiceImpl implements UserService {
         userModel = UserMapper.toEntity(userModel, userDto);
         log.info("Updating user with id: {}", userId);
         userRepository.save(userModel);
+        publishUserEvent(userModel, ActionType.UPDATE);
         var userResponse = new UserResponse();
         BeanUtils.copyProperties(userModel, userResponse);
         getFormattedEnumValue(userModel, userResponse);
@@ -109,6 +111,7 @@ public class UserServiceImpl implements UserService {
         userModel = UserMapper.toEntityImage(userModel, userDto);
         log.info("Updating image");
         userRepository.save(userModel);
+        publishUserEvent(userModel, ActionType.UPDATE);
         var userResponse = new UserResponse();
         BeanUtils.copyProperties(userModel, userResponse);
         getFormattedEnumValue(userModel, userResponse);
@@ -155,9 +158,9 @@ public class UserServiceImpl implements UserService {
         userResponse.setUserType(userModel.getUserType().getType());
     }
 
-    private void publishUserEvent(UserModel userModel) {
+    private void publishUserEvent(UserModel userModel, ActionType actionType) {
         log.info("Publishing event");
         var userEventRequest = UserMapper.toDto(userModel);
-        eventPublisher.publishUserEvent(userEventRequest, ActionType.CREATE);
+        eventPublisher.publishUserEvent(userEventRequest, actionType);
     }
 }

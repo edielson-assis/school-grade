@@ -52,4 +52,4 @@ spring:
 schoolgrade:
   broker:
     exchange: 
-      userEvent: schoolgrade.userevent
+      userEventExchange: schoolgrade.userevent

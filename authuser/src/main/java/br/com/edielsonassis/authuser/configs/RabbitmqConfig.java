@@ -14,7 +14,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 @Configuration
 public class RabbitmqConfig {
 
-    @Value(value = "${schoolgrade.broker.exchange.userEvent}")
+    @Value(value = "${schoolgrade.broker.exchange.userEventExchange}")
 	private String exchangeUserEvent;
     
 	private final CachingConnectionFactory cachingConnectionFactory;
