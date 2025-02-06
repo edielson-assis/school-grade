@@ -43,3 +43,16 @@ spring:
   output:
     ansi:
       enabled: always
+
+# Spring rabbitmq settings
+  rabbitmq:
+    addresses: ${RABBITMQ_ADDRESS:amqp://guest:guest@rabbit-mq:5672}
+
+# Spring cloud stream settings
+schoolgrade:
+  broker:
+    exchange: 
+      userEventExchange: schoolgrade.userevent
+    queue:
+      userEventQueue:
+        name: schoolgrade.userevent.ms.course

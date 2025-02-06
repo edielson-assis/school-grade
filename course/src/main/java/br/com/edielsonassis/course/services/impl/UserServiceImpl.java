@@ -27,6 +27,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserModel saveUser(UserModel userModel) {
+        log.info("Registering user data: {}", userModel.getFullName());
         return userRepository.save(userModel);
     }
 

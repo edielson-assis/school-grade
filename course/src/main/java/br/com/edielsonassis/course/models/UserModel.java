@@ -39,6 +39,9 @@ public class UserModel implements Serializable {
     @Column(nullable = false, name = "user_type")
     private String userType;
 
+    @Column(length = 20, name = "phone_number")
+    private String phoneNumber;
+
     @Column(nullable = false, unique = true, length = 15)
     private String cpf;
 

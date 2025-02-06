@@ -4,6 +4,7 @@ CREATE TABLE users(
     full_name VARCHAR(150) NOT NULL,
     user_status VARCHAR(50) NOT NULL,
     user_type VARCHAR(50) NOT NULL,
+    phone_number VARCHAR(20) NOT NULL,
     cpf VARCHAR(15) NOT NULL,
     img_url VARCHAR(255),
 
