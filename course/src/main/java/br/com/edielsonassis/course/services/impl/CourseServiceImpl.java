@@ -15,11 +15,14 @@ import br.com.edielsonassis.course.dtos.request.CourseRequest;
 import br.com.edielsonassis.course.dtos.response.CourseResponse;
 import br.com.edielsonassis.course.mappers.CourseMapper;
 import br.com.edielsonassis.course.models.CourseModel;
+import br.com.edielsonassis.course.models.UserModel;
 import br.com.edielsonassis.course.repositories.CourseRepository;
 import br.com.edielsonassis.course.repositories.LessonRepository;
 import br.com.edielsonassis.course.repositories.ModuleRepository;
 import br.com.edielsonassis.course.services.CourseService;
+import br.com.edielsonassis.course.services.UserService;
 import br.com.edielsonassis.course.services.exceptions.ObjectNotFoundException;
+import br.com.edielsonassis.course.services.exceptions.ValidationException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,11 +34,13 @@ public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final ModuleRepository moduleRepository;
     private final LessonRepository lessonRepository;
+    private final UserService userService;
 
     @Transactional
     @Override
     public CourseResponse saveCourse(CourseRequest courseRequest) {
         var courseModel = CourseMapper.toEntity(courseRequest);
+        verifyingUserInstructor(courseModel.getUserInstructor());
         log.info("Registering a new Course: {}", courseModel.getName());
 		courseRepository.save(courseModel);
         var courseResponse = new CourseResponse();
@@ -102,6 +107,18 @@ public class CourseServiceImpl implements CourseService {
         return courseResponse;
     }
 
+    @Transactional
+    @Override
+    public String saveSubscriptionUserInCourse(UUID courseId, UUID userId) {
+        var courseModel = findById(courseId);
+		var userModel = findUserById(userId);
+		existsSubscriptionByCourseAndUser(courseModel.getCourseId(), userModel.getUserId());
+		verifyingUserIsBlocked(userModel);
+		log.info("Saving subscription for user with id: {} in course with id: {}", userId, courseId);
+		courseRepository.saveCourseUser(courseId, userId);
+		return "Subscription created successfully.";
+    }
+
     private CourseModel findById(UUID id) {
         log.info("Verifying course by id: {}", id);
         return courseRepository.findById(id).orElseThrow(() -> {
@@ -113,5 +130,32 @@ public class CourseServiceImpl implements CourseService {
     private void getFormattedEnumValue(CourseModel courseModel, CourseResponse courseResponse) {
         courseResponse.setCourseStatus(courseModel.getCourseStatus().getStatus());
         courseResponse.setCourseLevel(courseModel.getCourseLevel().getLevel());
+    }
+
+    private void verifyingUserInstructor(UUID instructorId) {
+        var userModel = findUserById(instructorId);
+        if (userModel.getUserType().equals("STUDENT")) {
+            log.error("User is not an instructor");
+            throw new ValidationException("User is not an instructor");
+        }
+    }
+
+    private UserModel findUserById(UUID userId) {
+        return userService.findUserById(userId);
+    }
+
+    private void existsSubscriptionByCourseAndUser(UUID courseId, UUID userId) {
+        var Subscription = courseRepository.existsByCourseAndUser(courseId, userId);
+        if (Subscription) {
+            log.error("Subscription already exists!");
+            throw new ValidationException("Subscription already exists!");
+        }
+    }
+
+    private void verifyingUserIsBlocked(UserModel userModel) {
+        if (userModel.getUserStatus().equals("BLOCKED")) {
+            log.error("User is blocked");
+            throw new ValidationException("User is blocked");
+        }
     }
 }

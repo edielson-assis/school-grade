@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "schoolgrade.broker.exchange.user-event-exchange",
+    "type": "java.lang.String",
+    "description": "A description for 'schoolgrade.broker.exchange.user-event-exchange'"
+  },
+  {
+    "name": "schoolgrade.broker.queue.user-event-queue.name",
+    "type": "java.lang.String",
+    "description": "A description for 'schoolgrade.broker.queue.user-event-queue.name'"
+  }
+]}

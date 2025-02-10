@@ -51,7 +51,12 @@ public class CourseController {
 			@RequestParam(defaultValue = "10") Integer size, 
 			@RequestParam(defaultValue = "asc") String direction,
             @RequestParam(required = false) UUID userId) {
-        var courses = courseService.findAllCourses(page, size, direction, SpecificationTemplete.courseUserId(userId).and(spec));
+        Page<CourseResponse> courses = null;
+        if (userId == null) {
+            courses = courseService.findAllCourses(page, size, direction, spec);
+        } else {
+            courses = courseService.findAllCourses(page, size, direction, SpecificationTemplete.courseUserId(userId).and(spec));
+        }
         courses.stream().forEach(course -> course.add(linkTo(methodOn(CourseController.class).getOneCourse(course.getCourseId())).withSelfRel()));
         courses.forEach(course -> course.add(linkTo(methodOn(CourseController.class).getAllCourses(spec, page, size, direction, userId)).withRel("courses")));
         return new ResponseEntity<>(courses, HttpStatus.OK);

@@ -20,4 +20,6 @@ public interface CourseService {
     String deleteCourseById(UUID courseId);
 
     CourseResponse updateCourseById(UUID courseId, CourseRequest courseRequest);
+
+    String saveSubscriptionUserInCourse(UUID courseId, UUID userId);
 }

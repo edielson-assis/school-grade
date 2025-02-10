@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import br.com.edielsonassis.course.services.exceptions.ObjectNotFoundException;
+import br.com.edielsonassis.course.services.exceptions.ValidationException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
@@ -18,6 +19,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ExceptionResponse> resourceNotFound(ObjectNotFoundException exception, HttpServletRequest request) {
         String error = "Not found";
         HttpStatus status = HttpStatus.NOT_FOUND;
+        return ResponseEntity.status(status).body(errors(status, error, exception, request));
+    }
+
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ExceptionResponse> validationError(ValidationException exception, HttpServletRequest request) {
+        String error = "Validation error";
+        HttpStatus status = HttpStatus.CONFLICT;
         return ResponseEntity.status(status).body(errors(status, error, exception, request));
     }
 
