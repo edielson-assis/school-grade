@@ -16,6 +16,7 @@ import br.com.edielsonassis.authuser.dtos.response.UserResponse;
 import br.com.edielsonassis.authuser.mappers.UserMapper;
 import br.com.edielsonassis.authuser.models.UserModel;
 import br.com.edielsonassis.authuser.models.enums.ActionType;
+import br.com.edielsonassis.authuser.models.enums.UserType;
 import br.com.edielsonassis.authuser.publishers.UserEventPublisher;
 import br.com.edielsonassis.authuser.repositories.UserRepository;
 import br.com.edielsonassis.authuser.services.UserService;
@@ -35,11 +36,27 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserResponse saveUser(UserRequest userDto) {
-        var userModel = UserMapper.toEntity(userDto);
+        var userModel = UserMapper.toEntity(userDto, UserType.STUDENT);
         validateUserNameNotExists(userModel);
         validateEmailNotExists(userModel);
         validateCpfNotExists(userModel);
         log.info("Registering a new User: {}", userModel.getUserName());
+        userRepository.save(userModel);
+        publishUserEvent(userModel, ActionType.CREATE);
+        var userResponse = new UserResponse();
+        BeanUtils.copyProperties(userModel, userResponse);
+        getFormattedEnumValue(userModel, userResponse);
+        return userResponse;
+    }
+
+    @Transactional
+    @Override
+    public UserResponse saveInstructor(UserRequest userDto) {
+        var userModel = UserMapper.toEntity(userDto, UserType.INSTRUCTOR);
+        validateUserNameNotExists(userModel);
+        validateEmailNotExists(userModel);
+        validateCpfNotExists(userModel);
+        log.info("Registering a new Instructor: {}", userModel.getUserName());
         userRepository.save(userModel);
         publishUserEvent(userModel, ActionType.CREATE);
         var userResponse = new UserResponse();

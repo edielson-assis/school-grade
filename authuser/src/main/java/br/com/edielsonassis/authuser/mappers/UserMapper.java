@@ -17,11 +17,11 @@ public class UserMapper {
     
     private UserMapper() {}
 
-    public static UserModel toEntity(UserRequest userDto) {
+    public static UserModel toEntity(UserRequest userDto, UserType userType) {
         var userModel = new UserModel();
         BeanUtils.copyProperties(userDto, userModel);
         userModel.setUserStatus(UserStatus.ACTIVE);
-        userModel.setUserType(UserType.STUDENT);
+        userModel.setUserType(userType);
         userModel.setCreationDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
         return userModel;

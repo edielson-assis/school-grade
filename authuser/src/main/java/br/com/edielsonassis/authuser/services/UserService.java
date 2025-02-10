@@ -13,6 +13,8 @@ public interface UserService {
 
     UserResponse saveUser(UserRequest userDto);
 
+    UserResponse saveInstructor(UserRequest userDto);
+
     Page<UserResponse> findAllUsers(Integer page, Integer size, String direction, Specification<UserModel> spec);
 
     UserResponse findUserById(UUID userId);
