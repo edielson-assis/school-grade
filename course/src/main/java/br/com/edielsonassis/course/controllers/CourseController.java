@@ -30,7 +30,7 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 @RestController
-@RequestMapping("/course")
+@RequestMapping("/courses")
 public class CourseController {
     
     private final CourseService courseService;

@@ -40,7 +40,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseResponse saveCourse(CourseRequest courseRequest) {
         var courseModel = CourseMapper.toEntity(courseRequest);
-        verifyingUserInstructor(courseModel.getUserInstructor());
+        checkIfUserIsInstructor(courseModel.getUserInstructor());
         log.info("Registering a new Course: {}", courseModel.getName());
 		courseRepository.save(courseModel);
         var courseResponse = new CourseResponse();
@@ -89,6 +89,8 @@ public class CourseServiceImpl implements CourseService {
             log.info("Deleting all modules in course with id: {}", courseId);
             moduleRepository.deleteAll(modules);
         }
+        log.info("Deleting all subscriptions in course with id: {}", courseId);
+        courseRepository.deleteCourseUserByCourse(course.getCourseId());
         log.info("Deleting course with id: {}", courseId);
         courseRepository.delete(course);
         return "Course deleted successfully";
@@ -132,9 +134,9 @@ public class CourseServiceImpl implements CourseService {
         courseResponse.setCourseLevel(courseModel.getCourseLevel().getLevel());
     }
 
-    private void verifyingUserInstructor(UUID instructorId) {
+    private void checkIfUserIsInstructor(UUID instructorId) {
         var userModel = findUserById(instructorId);
-        if (userModel.getUserType().equals("STUDENT")) {
+        if (!userModel.getUserType().equals("INSTRUCTOR")) {
             log.error("User is not an instructor");
             throw new ValidationException("User is not an instructor");
         }

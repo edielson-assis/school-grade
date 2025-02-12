@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.edielsonassis.course.dtos.response.UserResponse;
 import br.com.edielsonassis.course.models.UserModel;
+import br.com.edielsonassis.course.repositories.CourseRepository;
 import br.com.edielsonassis.course.repositories.UserRepository;
 import br.com.edielsonassis.course.services.UserService;
 import br.com.edielsonassis.course.services.exceptions.ObjectNotFoundException;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final CourseRepository courseRepository;
 
     @Transactional
     @Override
@@ -51,6 +53,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUserById(UUID userId) {
         var user = findById(userId);
         log.info("Deleting user with id: {}", user.getUserId());
+        courseRepository.deleteCourseUserByUser(user.getUserId());
         userRepository.delete(user);
     }   
 
