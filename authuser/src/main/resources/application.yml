@@ -8,6 +8,18 @@ eureka:
     service-url:
       defaultZone: ${EUREKA_URL:http://localhost:8761/eureka}
 
+# Resilience4j settings
+resilience4j:
+  circuitbreaker:
+    instances:
+      circuitbreakerInstance:
+        sliding-window-size: 30
+        permitted-number-of-calls-in-half-open-state: 2
+        sliding-window-type: TIME_BASED
+        minimum-number-of-calls: 2
+        wait-duration-in-open-state: 30s
+        failure-rate-threshold: 80
+
 # Spring settings
 spring:
   application:
@@ -53,3 +65,6 @@ schoolgrade:
   broker:
     exchange: 
       userEventExchange: schoolgrade.userevent
+  api:
+    url:
+      course: ${SCHOOLGRADE_API_URL:http://course-service/courses}
