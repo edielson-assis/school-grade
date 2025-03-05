@@ -17,10 +17,12 @@ import br.com.edielsonassis.authuser.dtos.response.CourseResponse;
 import br.com.edielsonassis.authuser.dtos.response.PageResponse;
 import br.com.edielsonassis.authuser.services.UtilsService;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class CourseClient {
 
@@ -29,11 +31,6 @@ public class CourseClient {
 
     private final RestTemplate restTemplate;
     private final UtilsService utilsService;
-
-    public CourseClient(RestTemplate restTemplate, UtilsService utilsService) {
-        this.restTemplate = restTemplate;
-        this.utilsService = utilsService;
-    }
 
     @CircuitBreaker(name = "circuitbreakerInstance")
     public Page<CourseResponse> getAllCoursesByUser(UUID userId, Pageable pageable, String token) {

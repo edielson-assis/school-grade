@@ -6,7 +6,9 @@ import org.springframework.stereotype.Component;
 
 import br.com.edielsonassis.authuser.dtos.request.UserEventRequest;
 import br.com.edielsonassis.authuser.models.enums.ActionType;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @Component
 public class UserEventPublisher {
 
@@ -14,10 +16,6 @@ public class UserEventPublisher {
 	private String exchangeUserEvent;
     
 	private final RabbitTemplate rabbitTemplate; 
-
-    public UserEventPublisher(RabbitTemplate rabbitTemplate) {
-        this.rabbitTemplate = rabbitTemplate;
-    }
 	
 	public void publishUserEvent(UserEventRequest userEvent, ActionType actionType) {
 		userEvent.setActionType(actionType.toString());
