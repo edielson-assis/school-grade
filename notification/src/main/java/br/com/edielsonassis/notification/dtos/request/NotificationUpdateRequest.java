@@ -5,8 +5,7 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import br.com.edielsonassis.notification.dtos.views.NotificationView;
-import br.com.edielsonassis.notification.models.enums.NotificationStatus;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class NotificationUpdateRequest implements Serializable {
     
-    @NotNull(message = "NotificationStatus is required", groups = {NotificationView.notificationPut.class})
+    @NotBlank(message = "NotificationStatus is required", groups = {NotificationView.notificationPut.class})
     @JsonView(NotificationView.notificationPut.class)
-    private NotificationStatus notificationStatus;
+    private String notificationStatus;
 }

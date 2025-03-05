@@ -1,0 +1,31 @@
+package br.com.edielsonassis.notification.mappers;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
+import org.springframework.beans.BeanUtils;
+
+import br.com.edielsonassis.notification.dtos.request.NotificationRequest;
+import br.com.edielsonassis.notification.dtos.request.NotificationUpdateRequest;
+import br.com.edielsonassis.notification.models.NotificationModel;
+import br.com.edielsonassis.notification.models.enums.NotificationStatus;
+
+public class NotificationMapper {
+    
+    private static final String ZONE_ID = "America/Sao_Paulo";
+
+    private NotificationMapper() {}
+
+    public static NotificationModel toEntity(NotificationRequest notificationRequest) {
+        var notificationModel = new NotificationModel();
+        BeanUtils.copyProperties(notificationRequest, notificationModel);
+        notificationModel.setCreationDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
+        notificationModel.setNotificationStatus(NotificationStatus.CREATED);
+        return notificationModel;
+    }
+
+    public static NotificationModel toEntity(NotificationUpdateRequest notificationRequest, NotificationModel notificationModel) {
+        notificationModel.setNotificationStatus(NotificationStatus.valueOf(notificationRequest.getNotificationStatus().toUpperCase()));
+        return notificationModel;
+    }
+}
