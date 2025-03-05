@@ -5,8 +5,8 @@ import java.time.ZoneId;
 
 import org.springframework.beans.BeanUtils;
 
+import br.com.edielsonassis.notification.dtos.request.NotificationCommandRequest;
 import br.com.edielsonassis.notification.dtos.request.NotificationRequest;
-import br.com.edielsonassis.notification.dtos.request.NotificationUpdateRequest;
 import br.com.edielsonassis.notification.models.NotificationModel;
 import br.com.edielsonassis.notification.models.enums.NotificationStatus;
 
@@ -16,7 +16,7 @@ public class NotificationMapper {
 
     private NotificationMapper() {}
 
-    public static NotificationModel toEntity(NotificationRequest notificationRequest) {
+    public static NotificationModel toEntity(NotificationCommandRequest notificationRequest) {
         var notificationModel = new NotificationModel();
         BeanUtils.copyProperties(notificationRequest, notificationModel);
         notificationModel.setCreationDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
@@ -24,7 +24,7 @@ public class NotificationMapper {
         return notificationModel;
     }
 
-    public static NotificationModel toEntity(NotificationUpdateRequest notificationRequest, NotificationModel notificationModel) {
+    public static NotificationModel toEntity(NotificationRequest notificationRequest, NotificationModel notificationModel) {
         notificationModel.setNotificationStatus(NotificationStatus.valueOf(notificationRequest.getNotificationStatus().toUpperCase()));
         return notificationModel;
     }

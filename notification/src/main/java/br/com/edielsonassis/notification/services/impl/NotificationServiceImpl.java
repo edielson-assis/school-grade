@@ -7,8 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import br.com.edielsonassis.notification.dtos.request.NotificationCommandRequest;
 import br.com.edielsonassis.notification.dtos.request.NotificationRequest;
-import br.com.edielsonassis.notification.dtos.request.NotificationUpdateRequest;
 import br.com.edielsonassis.notification.dtos.response.NotificationResponse;
 import br.com.edielsonassis.notification.mappers.NotificationMapper;
 import br.com.edielsonassis.notification.models.NotificationModel;
@@ -27,7 +27,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationRepository notificationRepository;
 
     @Override
-    public void saveNotification(NotificationRequest notificationRequest) {
+    public void saveNotification(NotificationCommandRequest notificationRequest) {
         var notification = NotificationMapper.toEntity(notificationRequest);
         log.info("Registering a new Notification: {}", notification.getTitle());
         notificationRepository.save(notification);
@@ -45,7 +45,7 @@ public class NotificationServiceImpl implements NotificationService {
     }
 
     @Override
-    public NotificationResponse updateNotification(UUID notificationId, UUID userId, NotificationUpdateRequest notificationRequest) {
+    public NotificationResponse updateNotification(UUID notificationId, UUID userId, NotificationRequest notificationRequest) {
         var notification = findNotificationById(notificationId, userId);
         notification = NotificationMapper.toEntity(notificationRequest, notification);
         log.info("Updating Notification with ID: {}", notification.getNotificationId());
