@@ -11,6 +11,9 @@ import org.springframework.context.annotation.Configuration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Configuration
 public class RabbitmqConfig {
 
@@ -18,10 +21,6 @@ public class RabbitmqConfig {
 	private String exchangeUserEvent;
     
 	private final CachingConnectionFactory cachingConnectionFactory;
-	
-	public RabbitmqConfig(CachingConnectionFactory cachingConnectionFactory) {
-        this.cachingConnectionFactory = cachingConnectionFactory;
-    }
 	
 	@Bean
 	public RabbitTemplate rabbitTemplate() {
