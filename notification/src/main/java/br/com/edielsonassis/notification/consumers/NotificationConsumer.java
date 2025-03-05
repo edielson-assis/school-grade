@@ -7,12 +7,8 @@ import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.annotation.Validated;
-
-import com.fasterxml.jackson.annotation.JsonView;
 
 import br.com.edielsonassis.notification.dtos.request.NotificationCommandRequest;
-import br.com.edielsonassis.notification.dtos.views.NotificationView;
 import br.com.edielsonassis.notification.services.NotificationService;
 import lombok.RequiredArgsConstructor;
 
@@ -29,9 +25,7 @@ public class NotificationConsumer {
 			key = "${schoolgrade.broker.key.notificationCommandKey}"
 		)
 	)
-	public void listen(
-			@Payload @Validated(NotificationView.registrationPost.class) 
-            @JsonView(NotificationView.registrationPost.class) NotificationCommandRequest notificationCommand) {
+	public void listen(@Payload NotificationCommandRequest notificationCommand) {
 		notificationService.saveNotification(notificationCommand);
 	}
 }
