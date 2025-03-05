@@ -16,6 +16,7 @@ import br.com.edielsonassis.course.dtos.response.CourseResponse;
 import br.com.edielsonassis.course.mappers.CourseMapper;
 import br.com.edielsonassis.course.models.CourseModel;
 import br.com.edielsonassis.course.models.UserModel;
+import br.com.edielsonassis.course.publishers.NotificationCommandPublisher;
 import br.com.edielsonassis.course.repositories.CourseRepository;
 import br.com.edielsonassis.course.repositories.LessonRepository;
 import br.com.edielsonassis.course.repositories.ModuleRepository;
@@ -23,11 +24,12 @@ import br.com.edielsonassis.course.services.CourseService;
 import br.com.edielsonassis.course.services.UserService;
 import br.com.edielsonassis.course.services.exceptions.ObjectNotFoundException;
 import br.com.edielsonassis.course.services.exceptions.ValidationException;
-import lombok.AllArgsConstructor;
+import br.com.edielsonassis.course.template.NotificationTemplate;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class CourseServiceImpl implements CourseService {
 
@@ -35,6 +37,7 @@ public class CourseServiceImpl implements CourseService {
     private final ModuleRepository moduleRepository;
     private final LessonRepository lessonRepository;
     private final UserService userService;
+    private final NotificationCommandPublisher notificationPublisher;
 
     @Transactional
     @Override
@@ -118,6 +121,13 @@ public class CourseServiceImpl implements CourseService {
 		verifyingUserIsBlocked(userModel);
 		log.info("Saving subscription for user with id: {} in course with id: {}", userId, courseId);
 		courseRepository.saveCourseUser(courseId, userId);
+        try {
+            var notification = NotificationTemplate.buildMessage(courseModel, userModel);
+            log.info("Sending notification");
+            notificationPublisher.publishNotificationCommand(notification);
+        } catch (Exception e) {
+            log.warn("Error sending notification");
+        }
 		return "Subscription created successfully.";
     }
 
