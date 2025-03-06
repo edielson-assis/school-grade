@@ -8,7 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.edielsonassis.notification.dtos.request.NotificationCommandRequest;
-import br.com.edielsonassis.notification.dtos.request.NotificationRequest;
 import br.com.edielsonassis.notification.dtos.response.NotificationResponse;
 import br.com.edielsonassis.notification.mappers.NotificationMapper;
 import br.com.edielsonassis.notification.models.NotificationModel;
@@ -16,6 +15,7 @@ import br.com.edielsonassis.notification.models.enums.NotificationStatus;
 import br.com.edielsonassis.notification.repositories.NotificationRepository;
 import br.com.edielsonassis.notification.services.NotificationService;
 import br.com.edielsonassis.notification.services.exceptions.ObjectNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,6 +26,7 @@ public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository notificationRepository;
 
+    @Transactional
     @Override
     public void saveNotification(NotificationCommandRequest notificationRequest) {
         var notification = NotificationMapper.toEntity(notificationRequest);
@@ -44,10 +45,11 @@ public class NotificationServiceImpl implements NotificationService {
         });
     }
 
+    @Transactional
     @Override
-    public NotificationResponse updateNotification(UUID notificationId, UUID userId, NotificationRequest notificationRequest) {
+    public NotificationResponse updateNotificationStatus(UUID notificationId, UUID userId) {
         var notification = findNotificationById(notificationId, userId);
-        notification = NotificationMapper.toEntity(notificationRequest, notification);
+        notification = NotificationMapper.toEntity(notification);
         log.info("Updating Notification with ID: {}", notification.getNotificationId());
         notificationRepository.save(notification);
         var notificationResponse = new NotificationResponse();

@@ -6,7 +6,6 @@ import java.time.ZoneId;
 import org.springframework.beans.BeanUtils;
 
 import br.com.edielsonassis.notification.dtos.request.NotificationCommandRequest;
-import br.com.edielsonassis.notification.dtos.request.NotificationRequest;
 import br.com.edielsonassis.notification.models.NotificationModel;
 import br.com.edielsonassis.notification.models.enums.NotificationStatus;
 
@@ -24,8 +23,8 @@ public class NotificationMapper {
         return notificationModel;
     }
 
-    public static NotificationModel toEntity(NotificationRequest notificationRequest, NotificationModel notificationModel) {
-        notificationModel.setNotificationStatus(NotificationStatus.valueOf(notificationRequest.getNotificationStatus().toUpperCase()));
+    public static NotificationModel toEntity(NotificationModel notificationModel) {
+        notificationModel.setNotificationStatus(NotificationStatus.READ);
         return notificationModel;
     }
 }
