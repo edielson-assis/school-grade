@@ -34,3 +34,7 @@ spring:
         uri: lb://course-service
         predicates:
         - Path=/course-service/**
+      - id: notification-service
+        uri: lb://notification-service
+        predicates:
+        - Path=/notification-service/**
