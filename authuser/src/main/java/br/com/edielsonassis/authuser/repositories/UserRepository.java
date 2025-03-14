@@ -1,5 +1,6 @@
 package br.com.edielsonassis.authuser.repositories;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,6 @@ public interface UserRepository extends JpaRepository<UserModel, UUID>, JpaSpeci
     boolean existsByUserNameCustom(String userName);
 
     boolean existsByCpf(String cpf);
+
+    Optional<UserModel> findByEmail(String email);
 }
