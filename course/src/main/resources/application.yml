@@ -7,5 +7,6 @@ spring:
   cloud:
     config:
       discovery:
-        enabled: true
         service-id: config-server
+      username: ${CONFIG_SERVER_USERNAME:admin}
+      password: ${CONFIG_SERVER_PASSWORD:admin}
