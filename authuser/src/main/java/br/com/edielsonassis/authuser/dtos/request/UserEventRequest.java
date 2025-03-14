@@ -1,5 +1,6 @@
 package br.com.edielsonassis.authuser.dtos.request;
 
+import java.util.List;
 import java.util.UUID;
 
 import lombok.Getter;
@@ -18,4 +19,5 @@ public class UserEventRequest {
 	private String cpf;
 	private String imgUrl;
 	private String actionType;
+	private List<String> roles;
 }

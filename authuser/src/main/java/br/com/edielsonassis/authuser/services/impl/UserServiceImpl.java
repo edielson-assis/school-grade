@@ -1,5 +1,6 @@
 package br.com.edielsonassis.authuser.services.impl;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
@@ -14,11 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.edielsonassis.authuser.dtos.request.UserRequest;
 import br.com.edielsonassis.authuser.dtos.response.UserResponse;
 import br.com.edielsonassis.authuser.mappers.UserMapper;
+import br.com.edielsonassis.authuser.models.RoleModel;
 import br.com.edielsonassis.authuser.models.UserModel;
 import br.com.edielsonassis.authuser.models.enums.ActionType;
 import br.com.edielsonassis.authuser.models.enums.UserType;
 import br.com.edielsonassis.authuser.publishers.UserEventPublisher;
 import br.com.edielsonassis.authuser.repositories.UserRepository;
+import br.com.edielsonassis.authuser.services.RoleService;
 import br.com.edielsonassis.authuser.services.UserService;
 import br.com.edielsonassis.authuser.services.exceptions.ObjectNotFoundException;
 import br.com.edielsonassis.authuser.services.exceptions.ValidationException;
@@ -32,15 +35,19 @@ public class UserServiceImpl implements UserService {
    
     private final UserRepository userRepository;
     private final UserEventPublisher eventPublisher;
+    private final RoleService roleService;
+    private static final String ROLE_INSTRUCTOR = "ROLE_INSTRUCTOR";
+    private static final String ROLE_STUDENT = "ROLE_STUDENT";
+
 
     @Transactional
     @Override
     public UserResponse saveUser(UserRequest userDto) {
-        var userModel = UserMapper.toEntity(userDto, UserType.STUDENT);
+        var userModel = UserMapper.toEntity(userDto, UserType.STUDENT, List.of(getRoleType(ROLE_STUDENT)));
         validateUserNameNotExists(userModel);
         validateEmailNotExists(userModel);
         validateCpfNotExists(userModel);
-        log.info("Registering a new User: {}", userModel.getUserName());
+        log.info("Registering a new User: {}", userModel.getUserNameCustom());
         userRepository.save(userModel);
         publishUserEvent(userModel, ActionType.CREATE);
         var userResponse = new UserResponse();
@@ -52,11 +59,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserResponse saveInstructor(UserRequest userDto) {
-        var userModel = UserMapper.toEntity(userDto, UserType.INSTRUCTOR);
+        var userModel = UserMapper.toEntity(userDto, UserType.INSTRUCTOR, List.of(getRoleType(ROLE_INSTRUCTOR), getRoleType(ROLE_STUDENT)));
         validateUserNameNotExists(userModel);
         validateEmailNotExists(userModel);
         validateCpfNotExists(userModel);
-        log.info("Registering a new Instructor: {}", userModel.getUserName());
+        log.info("Registering a new Instructor: {}", userModel.getUserNameCustom());
         userRepository.save(userModel);
         publishUserEvent(userModel, ActionType.CREATE);
         var userResponse = new UserResponse();
@@ -144,10 +151,10 @@ public class UserServiceImpl implements UserService {
     }
 
     private synchronized void validateUserNameNotExists(UserModel user) {
-		log.info("Verifying the username: {}", user.getUserName());
-        var exists = userRepository.existsByUserName(user.getUserName());
+		log.info("Verifying the username: {}", user.getUserNameCustom());
+        var exists = userRepository.existsByUserNameCustom(user.getUserNameCustom());
         if (exists) {
-            log.error("Username already exists: {}", user.getUserName());
+            log.error("Username already exists: {}", user.getUserNameCustom());
             throw new ValidationException("Username already exists");
         }
     }
@@ -179,5 +186,9 @@ public class UserServiceImpl implements UserService {
         log.info("Publishing event");
         var userEventRequest = UserMapper.toDto(userModel);
         eventPublisher.publishUserEvent(userEventRequest, actionType);
+    }
+
+    private RoleModel getRoleType(String roleName) {
+        return roleService.findbyRole(roleName);
     }
 }
