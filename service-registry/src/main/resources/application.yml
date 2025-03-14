@@ -12,8 +12,16 @@ spring:
     ansi:
       enabled: always
 
+# Basic authentication settings
+schoolgrade:
+  serviceRegistry:
+    username: ${SERVICE_REGISTRY_USERNAME:admin}
+    password: ${SERVICE_REGISTRY_PASSWORD:admin}
+
 # Eureka settings
 eureka:
   client:
     register-with-eureka: false
     fetch-registry: false
+    service-url:
+      defaultZone: http://${schoolgrade.serviceRegistry.username}:${schoolgrade.serviceRegistry.password}@localhost:8761/eureka/
