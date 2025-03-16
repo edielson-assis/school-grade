@@ -25,13 +25,13 @@ public class UserRequest implements Serializable {
     @JsonView(UserView.registrationPost.class)
     private String userName;
 
-    @NotBlank(message = "Email is required", groups = {UserView.registrationPost.class})
+    @NotBlank(message = "Email is required", groups = {UserView.registrationPost.class, UserView.userSignin.class})
     @Email(message = "Invalid email", groups = {UserView.registrationPost.class})
-    @JsonView(UserView.registrationPost.class)
+    @JsonView({UserView.registrationPost.class, UserView.userSignin.class})
     private String email;
 
-    @NotBlank(message = "Password is required", groups = {UserView.registrationPost.class, UserView.passwordPut.class})
-    @JsonView({UserView.registrationPost.class, UserView.passwordPut.class})
+    @NotBlank(message = "Password is required", groups = {UserView.registrationPost.class, UserView.passwordPut.class, UserView.userSignin.class})
+    @JsonView({UserView.registrationPost.class, UserView.passwordPut.class, UserView.userSignin.class})
     private String password;
 
     @NotBlank(message = "OldPassword is required", groups = {UserView.passwordPut.class})

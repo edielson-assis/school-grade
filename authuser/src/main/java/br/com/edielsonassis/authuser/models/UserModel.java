@@ -91,15 +91,15 @@ public class UserModel implements UserDetails {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_role", joinColumns = {@JoinColumn (name = "user_id")}, inverseJoinColumns = {@JoinColumn (name = "role_id")})
-    private List<RoleModel> roles = new ArrayList<>();
+    private final List<RoleModel> permissions = new ArrayList<>();
 
     public List<String> getRoles() {
-		return roles.stream().map(RoleModel::getAuthority).collect(Collectors.toList());
+		return permissions.stream().map(RoleModel::getRoleName).collect(Collectors.toList());
 	}
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles;
+        return this.permissions;
     }
 
     @Override

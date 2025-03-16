@@ -22,9 +22,10 @@ public class UserMapper {
     public static UserModel toEntity(UserRequest userDto, UserType userType, List<RoleModel> roles) {
         var userModel = new UserModel();
         BeanUtils.copyProperties(userDto, userModel);
+        userModel.setUserNameCustom(userDto.getUserName());
         userModel.setUserStatus(UserStatus.ACTIVE);
         userModel.setUserType(userType);
-        userModel.setRoles(roles);
+        userModel.getPermissions().addAll(roles);
         userModel.setCreationDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
         return userModel;

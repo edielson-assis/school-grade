@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 
 import br.com.edielsonassis.authuser.dtos.request.UserRequest;
+import br.com.edielsonassis.authuser.dtos.response.TokenAndRefreshTokenResponse;
+import br.com.edielsonassis.authuser.dtos.response.TokenResponse;
 import br.com.edielsonassis.authuser.dtos.response.UserResponse;
 import br.com.edielsonassis.authuser.models.UserModel;
 
@@ -19,11 +21,15 @@ public interface UserService {
 
     UserResponse findUserById(UUID userId);
 
-    String deleteUserById(UUID userId);
+    UserResponse updateUser(UserRequest userDto);
 
-    UserResponse updateUserById(UUID userId, UserRequest userDto);
+    String updateUserPassword(UserRequest userDto);
 
-    String updateUserPasswordById(UUID userId, UserRequest userDto);
+    UserResponse updateUserImage(UserRequest userDto);
 
-    UserResponse updateUserImageById(UUID userId, UserRequest userDto);
+    TokenAndRefreshTokenResponse signin(UserRequest userDto);
+
+    TokenResponse refreshToken(String username, String refreshToken);
+
+    void disableUser(String email);
 }

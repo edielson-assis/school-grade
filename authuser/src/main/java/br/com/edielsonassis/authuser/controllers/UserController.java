@@ -53,35 +53,35 @@ public class UserController {
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<String> deleteUser(@PathVariable UUID userId) {
-        var user = userService.deleteUserById(userId);
-        return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-
-    @PutMapping("/{userId}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable UUID userId,
+    @PutMapping
+    public ResponseEntity<UserResponse> updateUser(
             @RequestBody @Validated(UserView.userPut.class) 
             @JsonView(UserView.userPut.class) UserRequest userDto) {
-        var user = userService.updateUserById(userId, userDto);
+        var user = userService.updateUser(userDto);
         user.add(linkTo(methodOn(UserController.class).getOneUser(user.getUserId())).withSelfRel());
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PutMapping("/{userId}/password")
-    public ResponseEntity<String> updatePassword(@PathVariable UUID userId,
+    @PutMapping("/password")
+    public ResponseEntity<String> updatePassword(
             @RequestBody @Validated(UserView.passwordPut.class) 
             @JsonView(UserView.passwordPut.class) UserRequest userDto) {
-        var user = userService.updateUserPasswordById(userId, userDto);
+        var user = userService.updateUserPassword(userDto);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
-    @PutMapping("/{userId}/image")
-    public ResponseEntity<UserResponse> updateImage(@PathVariable UUID userId,
+    @PutMapping("/image")
+    public ResponseEntity<UserResponse> updateImage(
             @RequestBody @Validated(UserView.imagePut.class) 
             @JsonView(UserView.imagePut.class) UserRequest userDto) {
-        var user = userService.updateUserImageById(userId, userDto);
+        var user = userService.updateUserImage(userDto);
         user.add(linkTo(methodOn(UserController.class).getOneUser(user.getUserId())).withSelfRel());
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
+
+	@DeleteMapping(path = "/{email}")
+	public ResponseEntity<Void> disableUser(@PathVariable(value = "email") String email) {
+		userService.disableUser(email);
+		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
 }
