@@ -15,11 +15,11 @@ import br.com.edielsonassis.course.repositories.CourseRepository;
 import br.com.edielsonassis.course.repositories.UserRepository;
 import br.com.edielsonassis.course.services.UserService;
 import br.com.edielsonassis.course.services.exceptions.ObjectNotFoundException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -54,7 +54,8 @@ public class UserServiceImpl implements UserService {
         var user = findById(userId);
         log.info("Deleting user with id: {}", user.getUserId());
         courseRepository.deleteCourseUserByUser(user.getUserId());
-        userRepository.delete(user);
+        user.setEnabled(false);
+		userRepository.save(user);
     }   
 
     private UserModel findById(UUID userId) {

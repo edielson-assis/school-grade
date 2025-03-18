@@ -18,4 +18,5 @@ public class UserEventRequest {
 	private String cpf;
 	private String imgUrl;
 	private String actionType;
+	private String role;
 }

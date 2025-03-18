@@ -1,8 +1,13 @@
 package br.com.edielsonassis.course.models;
 
-import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,7 +24,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "users")
-public class UserModel implements Serializable {
+public class UserModel implements UserDetails {
 
     private static final long serialVersionUID = 1L;
 
@@ -48,6 +53,33 @@ public class UserModel implements Serializable {
     @Column(name = "img_url")
     private String imgUrl;
 
+    @Column(nullable = false)
+    private String role;
+
+    @Column(nullable = false, name = "is_enabled")
+    private boolean enabled = true;
+
     @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
 	private Set<CourseModel> courses;
+    
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(this.role));
+    }
+
+    @Override
+    public String getPassword() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getPassword'");
+    }
+
+    @Override
+    public String getUsername() {
+        return this.email;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return this.enabled;
+    }
 }
