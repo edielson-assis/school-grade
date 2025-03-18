@@ -1,8 +1,5 @@
 package br.com.edielsonassis.authuser.services.impl;
 
-import java.util.List;
-import java.util.UUID;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,14 +29,13 @@ import br.com.edielsonassis.authuser.publishers.UserEventPublisher;
 import br.com.edielsonassis.authuser.repositories.UserRepository;
 import br.com.edielsonassis.authuser.services.RoleService;
 import br.com.edielsonassis.authuser.services.UserService;
-import br.com.edielsonassis.authuser.services.exceptions.ObjectNotFoundException;
 import br.com.edielsonassis.authuser.services.exceptions.ValidationException;
 import br.com.edielsonassis.authuser.utils.component.AuthenticatedUser;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class UserServiceImpl implements UserService {
    
@@ -53,11 +49,10 @@ public class UserServiceImpl implements UserService {
     private static final String ROLE_INSTRUCTOR = "ROLE_INSTRUCTOR";
     private static final String ROLE_STUDENT = "ROLE_STUDENT";
 
-
     @Transactional
     @Override
     public UserResponse saveUser(UserRequest userDto) {
-        var userModel = UserMapper.toEntity(userDto, UserType.STUDENT, List.of(getRoleType(ROLE_STUDENT)));
+        var userModel = UserMapper.toEntity(userDto, UserType.STUDENT, getRoleType(ROLE_STUDENT));
         validateUserNameNotExists(userModel);
         validateEmailNotExists(userModel);
         validateCpfNotExists(userModel);
@@ -74,7 +69,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserResponse saveInstructor(UserRequest userDto) {
-        var userModel = UserMapper.toEntity(userDto, UserType.INSTRUCTOR, List.of(getRoleType(ROLE_INSTRUCTOR), getRoleType(ROLE_STUDENT)));
+        var userModel = UserMapper.toEntity(userDto, UserType.INSTRUCTOR, getRoleType(ROLE_INSTRUCTOR));
         validateUserNameNotExists(userModel);
         validateEmailNotExists(userModel);
         validateCpfNotExists(userModel);
@@ -102,8 +97,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse findUserById(UUID userId) {
-        var userModel = findById(userId);
+    public UserResponse findUser() {
+        var userModel = currentUser();
         var userResponse = new UserResponse();
         BeanUtils.copyProperties(userModel, userResponse);
         getFormattedEnumValue(userModel, userResponse);
@@ -176,14 +171,6 @@ public class UserServiceImpl implements UserService {
 		userRepository.save(savedUser);
         publishUserEvent(savedUser, ActionType.DELETE);
 	}
-
-    private UserModel findById(UUID userId) {
-        log.info("Verifying the user's Id: {}", userId);
-        return userRepository.findById(userId).orElseThrow(() -> {
-            log.error("User id not found: {}", userId);
-            return new ObjectNotFoundException("User id not found: " + userId);
-        }); 
-    }
 
     private synchronized void validateUserNameNotExists(UserModel user) {
 		log.info("Verifying the username: {}", user.getUserNameCustom());

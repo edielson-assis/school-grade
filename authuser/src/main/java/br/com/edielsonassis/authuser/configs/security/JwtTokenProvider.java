@@ -12,7 +12,6 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -23,6 +22,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 import br.com.edielsonassis.authuser.dtos.response.TokenAndRefreshTokenResponse;
 import br.com.edielsonassis.authuser.dtos.response.TokenResponse;
+import br.com.edielsonassis.authuser.services.AuthService;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -33,8 +33,8 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class JwtTokenProvider {
 
-    private static final String CLAIM_ROLES = "roles";
-    private static final String BEARER_PREFIX = "Bearer ";
+    private static final String ROLES = "roles";
+    private static final String BEARER = "Bearer ";
     private static final String ZONE_ID = "America/Sao_Paulo";
 
     @Value("${security.jwt.token.secret-key}")
@@ -46,7 +46,7 @@ public class JwtTokenProvider {
     @Value("${security.jwt.token.refresh-expiration-length}")
     private int refreshExpirationToken;
 
-    private final UserDetailsService userDetailsService;
+    private final AuthService authService;
     private Algorithm algorithm;
 
     @PostConstruct
@@ -71,7 +71,7 @@ public class JwtTokenProvider {
         DecodedJWT decodedJWT = verifyToken(refreshToken);
         String user = decodedJWT.getSubject();
 		verifyUsername(username, decodedJWT);
-        List<String> roles = decodedJWT.getClaim(CLAIM_ROLES).asList(String.class);
+        List<String> roles = decodedJWT.getClaim(ROLES).asList(String.class);
 		log.debug("Token refreshed for user: {}", user);
         return createAccessToken(user, roles);
     }
@@ -79,7 +79,7 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String token) {
 		log.info("Getting authentication from token");
         DecodedJWT decodedJWT = verifyToken(token);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(decodedJWT.getSubject());
+        UserDetails userDetails = authService.loadUserByUsername(decodedJWT.getSubject());
         log.debug("User authenticated: {}", decodedJWT.getSubject());
 		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
@@ -87,8 +87,8 @@ public class JwtTokenProvider {
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader("Authorization");
 		log.info("Resolving token from request header");
-        if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
-            return bearerToken.substring(BEARER_PREFIX.length());
+        if (bearerToken != null && bearerToken.startsWith(BEARER)) {
+            return bearerToken.substring(BEARER.length());
         }
         return null;
     }
@@ -113,7 +113,7 @@ public class JwtTokenProvider {
         log.info("Creating access token for user: {}", username);
 		String issuerUrl = ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString();
         return JWT.create()
-                .withClaim(CLAIM_ROLES, roles)
+                .withClaim(ROLES, roles)
                 .withIssuedAt(now)
                 .withExpiresAt(expiration)
                 .withSubject(username)
@@ -125,7 +125,7 @@ public class JwtTokenProvider {
         log.info("Creating refresh token for user: {}", username);
 		Instant expiration = calculateExpirationRefreshToken();
         return JWT.create()
-                .withClaim(CLAIM_ROLES, roles)
+                .withClaim(ROLES, roles)
                 .withIssuedAt(now)
                 .withExpiresAt(expiration)
                 .withSubject(username)
@@ -149,8 +149,8 @@ public class JwtTokenProvider {
     }
 
     private String stripBearerPrefix(String token) {
-        if (token.startsWith(BEARER_PREFIX)) {
-            return token.substring(BEARER_PREFIX.length());
+        if (token.startsWith(BEARER)) {
+            return token.substring(BEARER.length());
         }
         return token;
     }

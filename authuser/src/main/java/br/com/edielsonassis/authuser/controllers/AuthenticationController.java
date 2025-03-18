@@ -36,7 +36,7 @@ public class AuthenticationController {
             @RequestBody @Validated(UserView.registrationPost.class) 
             @JsonView(UserView.registrationPost.class) UserRequest userRequest) {
         var user = userService.saveUser(userRequest);
-        user.add(linkTo(methodOn(UserController.class).getOneUser(user.getUserId())).withSelfRel());
+        user.add(linkTo(methodOn(UserController.class).getOneUser()).withSelfRel());
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 

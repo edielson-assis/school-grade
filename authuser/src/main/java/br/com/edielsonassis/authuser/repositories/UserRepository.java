@@ -3,6 +3,7 @@ package br.com.edielsonassis.authuser.repositories;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
@@ -16,5 +17,6 @@ public interface UserRepository extends JpaRepository<UserModel, UUID>, JpaSpeci
 
     boolean existsByCpf(String cpf);
 
+    @EntityGraph(attributePaths = "permissions", type = EntityGraph.EntityGraphType.FETCH)
     Optional<UserModel> findByEmail(String email);
 }

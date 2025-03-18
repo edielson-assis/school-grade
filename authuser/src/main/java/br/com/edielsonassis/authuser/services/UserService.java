@@ -1,7 +1,5 @@
 package br.com.edielsonassis.authuser.services;
 
-import java.util.UUID;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -19,7 +17,7 @@ public interface UserService {
 
     Page<UserResponse> findAllUsers(Integer page, Integer size, String direction, Specification<UserModel> spec);
 
-    UserResponse findUserById(UUID userId);
+    UserResponse findUser();
 
     UserResponse updateUser(UserRequest userDto);
 

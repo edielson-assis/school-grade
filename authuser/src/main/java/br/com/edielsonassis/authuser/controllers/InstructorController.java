@@ -31,7 +31,7 @@ public class InstructorController {
             @RequestBody @Validated(UserView.registrationPost.class) 
             @JsonView(UserView.registrationPost.class) UserRequest userDto) {
         var user = userService.saveInstructor(userDto);
-        user.add(linkTo(methodOn(UserController.class).getOneUser(user.getUserId())).withSelfRel());
+        user.add(linkTo(methodOn(UserController.class).getOneUser()).withSelfRel());
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 }

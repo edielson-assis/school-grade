@@ -3,8 +3,6 @@ package br.com.edielsonassis.authuser.controllers;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.UUID;
-
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,15 +39,15 @@ public class UserController {
 			@RequestParam(defaultValue = "10") Integer size, 
 			@RequestParam(defaultValue = "asc") String direction) {
         var users = userService.findAllUsers(page, size, direction, spec);
-		users.stream().forEach(user -> user.add(linkTo(methodOn(UserController.class).getOneUser(user.getUserId())).withSelfRel()));
+		users.stream().forEach(user -> user.add(linkTo(methodOn(UserController.class).getOneUser()).withSelfRel()));
         users.forEach(user -> user.add(linkTo(methodOn(UserController.class).getAllUsers(spec, page, size, direction)).withRel("users")));
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<UserResponse> getOneUser(@PathVariable UUID userId) {
-        var user = userService.findUserById(userId);
-        user.add(linkTo(methodOn(UserController.class).getOneUser(userId)).withSelfRel());
+    @GetMapping("/user")
+    public ResponseEntity<UserResponse> getOneUser() {
+        var user = userService.findUser();
+        user.add(linkTo(methodOn(UserController.class).getOneUser()).withSelfRel());
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -58,7 +56,7 @@ public class UserController {
             @RequestBody @Validated(UserView.userPut.class) 
             @JsonView(UserView.userPut.class) UserRequest userDto) {
         var user = userService.updateUser(userDto);
-        user.add(linkTo(methodOn(UserController.class).getOneUser(user.getUserId())).withSelfRel());
+        user.add(linkTo(methodOn(UserController.class).getOneUser()).withSelfRel());
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -75,7 +73,7 @@ public class UserController {
             @RequestBody @Validated(UserView.imagePut.class) 
             @JsonView(UserView.imagePut.class) UserRequest userDto) {
         var user = userService.updateUserImage(userDto);
-        user.add(linkTo(methodOn(UserController.class).getOneUser(user.getUserId())).withSelfRel());
+        user.add(linkTo(methodOn(UserController.class).getOneUser()).withSelfRel());
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 

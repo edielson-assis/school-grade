@@ -2,7 +2,6 @@ package br.com.edielsonassis.authuser.mappers;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 
@@ -19,13 +18,13 @@ public class UserMapper {
     
     private UserMapper() {}
 
-    public static UserModel toEntity(UserRequest userDto, UserType userType, List<RoleModel> roles) {
+    public static UserModel toEntity(UserRequest userDto, UserType userType, RoleModel role) {
         var userModel = new UserModel();
         BeanUtils.copyProperties(userDto, userModel);
         userModel.setUserNameCustom(userDto.getUserName());
         userModel.setUserStatus(UserStatus.ACTIVE);
         userModel.setUserType(userType);
-        userModel.getPermissions().addAll(roles);
+        userModel.getPermissions().add(role);
         userModel.setCreationDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
         return userModel;
@@ -55,7 +54,11 @@ public class UserMapper {
         BeanUtils.copyProperties(userModel, userEventRequest);
         userEventRequest.setUserStatus(userModel.getUserStatus().name());
         userEventRequest.setUserType(userModel.getUserType().name());
-        userEventRequest.setRoles(userModel.getRoles());
+        userEventRequest.setRole(getRole(userModel));
         return userEventRequest;
+    }
+
+    private static String getRole (UserModel userModel) {
+        return userModel.getRoles().stream().findFirst().get();
     }
 }

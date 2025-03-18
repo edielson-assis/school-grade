@@ -6,11 +6,11 @@ import br.com.edielsonassis.authuser.models.RoleModel;
 import br.com.edielsonassis.authuser.repositories.RoleRepository;
 import br.com.edielsonassis.authuser.services.RoleService;
 import br.com.edielsonassis.authuser.services.exceptions.ObjectNotFoundException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class RoleServiceImpl implements RoleService {
     
