@@ -54,11 +54,6 @@ public class UserMapper {
         BeanUtils.copyProperties(userModel, userEventRequest);
         userEventRequest.setUserStatus(userModel.getUserStatus().name());
         userEventRequest.setUserType(userModel.getUserType().name());
-        userEventRequest.setRole(getRole(userModel));
         return userEventRequest;
-    }
-
-    private static String getRole (UserModel userModel) {
-        return userModel.getRoles().stream().findFirst().get();
     }
 }
