@@ -29,6 +29,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserModel saveUser(UserModel userModel) {
+        updateUserStatus(userModel);
         log.info("Registering user data: {}", userModel.getFullName());
         return userRepository.save(userModel);
     }
@@ -64,5 +65,15 @@ public class UserServiceImpl implements UserService {
             log.error("User id not found: {}", userId);
             return new ObjectNotFoundException("User id not found: " + userId);
         }); 
+    }
+
+    private void updateUserStatus(UserModel userModel) {
+        if (verifyUserStatus(userModel)) {
+            userModel.setEnabled(true);
+        }
+    }
+
+    private boolean verifyUserStatus(UserModel userModel) {
+        return userModel.getUserStatus().equals("ACTIVE");
     }
 }

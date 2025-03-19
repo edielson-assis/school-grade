@@ -56,8 +56,8 @@ public class SecurityConfig {
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()))
                     .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers(INSTRUCTOR_METHODS).hasRole(INSTRUCTOR)
                         .requestMatchers(HttpMethod.GET, STUDENT_METHODS).hasRole(STUDENT)
+                        .requestMatchers(INSTRUCTOR_METHODS).hasRole(INSTRUCTOR)
                         .anyRequest().authenticated())
                 .build();
     }

@@ -1,14 +1,9 @@
 package br.com.edielsonassis.course.models;
 
-import java.util.Collection;
-import java.util.List;
+import java.io.Serializable;
 import java.util.Set;
 import java.util.UUID;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import br.com.edielsonassis.course.models.interfaces.Authentication;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -24,7 +19,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "users")
-public class UserModel implements Authentication {
+public class UserModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -53,22 +48,9 @@ public class UserModel implements Authentication {
     @Column(name = "img_url")
     private String imgUrl;
 
-    @Column(nullable = false)
-    private String role;
-
     @Column(nullable = false, name = "is_enabled")
-    private boolean enabled = true;
+    private boolean enabled;
 
     @ManyToMany(mappedBy = "users", fetch = FetchType.LAZY)
 	private Set<CourseModel> courses;
-    
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(this.role));
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return this.enabled;
-    }
 }

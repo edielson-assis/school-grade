@@ -2,6 +2,7 @@ package br.com.edielsonassis.course.configs.security;
 
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,7 +15,6 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
-import br.com.edielsonassis.course.services.AuthService;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -29,8 +29,8 @@ public class JwtTokenProvider {
     private String secretKey;
 
     private static final String BEARER = "Bearer ";
+    private static final String ROLES = "roles";
 
-    private final AuthService authService;
     private Algorithm algorithm;
 
     @PostConstruct
@@ -42,7 +42,9 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String token) {
 		log.info("Getting authentication from token");
         DecodedJWT decodedJWT = verifyToken(token);
-        UserDetails userDetails = authService.loadUserByUsername(decodedJWT.getSubject());
+        var roles = getClaimNameJwt(token, ROLES);
+        var username = decodedJWT.getSubject();
+        UserDetails userDetails = AuthenticationImpl.build(username, roles);
         log.debug("User authenticated: {}", decodedJWT.getSubject());
 		return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
@@ -67,4 +69,8 @@ public class JwtTokenProvider {
         JWTVerifier verifier = JWT.require(algorithm).build();
         return verifier.verify(token);
     }
+
+    private List<String> getClaimNameJwt(String token, String claimName) {
+		return JWT.decode(token).getClaim(claimName).asList(String.class);
+	}
 }
