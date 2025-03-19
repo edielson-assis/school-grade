@@ -7,8 +7,8 @@ import java.util.UUID;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
+import br.com.edielsonassis.course.models.interfaces.Authentication;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -24,7 +24,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "users")
-public class UserModel implements UserDetails {
+public class UserModel implements Authentication {
 
     private static final long serialVersionUID = 1L;
 
@@ -65,17 +65,6 @@ public class UserModel implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(this.role));
-    }
-
-    @Override
-    public String getPassword() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPassword'");
-    }
-
-    @Override
-    public String getUsername() {
-        return this.email;
     }
 
     @Override
