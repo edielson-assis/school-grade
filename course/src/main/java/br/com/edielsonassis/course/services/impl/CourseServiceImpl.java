@@ -43,7 +43,6 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public CourseResponse saveCourse(CourseRequest courseRequest) {
         var courseModel = CourseMapper.toEntity(courseRequest);
-        checkIfUserIsInstructor(courseModel.getUserInstructor());
         log.info("Registering a new Course: {}", courseModel.getName());
 		courseRepository.save(courseModel);
         var courseResponse = new CourseResponse();
@@ -142,14 +141,6 @@ public class CourseServiceImpl implements CourseService {
     private void getFormattedEnumValue(CourseModel courseModel, CourseResponse courseResponse) {
         courseResponse.setCourseStatus(courseModel.getCourseStatus().getStatus());
         courseResponse.setCourseLevel(courseModel.getCourseLevel().getLevel());
-    }
-
-    private void checkIfUserIsInstructor(UUID instructorId) {
-        var userModel = findUserById(instructorId);
-        if (!userModel.getUserType().equals("INSTRUCTOR")) {
-            log.error("User is not an instructor");
-            throw new ValidationException("User is not an instructor");
-        }
     }
 
     private UserModel findUserById(UUID userId) {

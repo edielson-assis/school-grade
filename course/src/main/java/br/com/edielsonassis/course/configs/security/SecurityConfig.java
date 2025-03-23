@@ -27,8 +27,9 @@ public class SecurityConfig {
 
     private static final String INSTRUCTOR = "INSTRUCTOR";
     private static final String STUDENT = "STUDENT";
-    private static final String[] INSTRUCTOR_METHODS = {"/courses/**"};
-    private static final String[] STUDENT_METHODS = {"/courses/**"};
+    private static final String[] INSTRUCTOR_METHODS = {"/courses/**", "/module/**"};
+    private static final String[] STUDENT_GET_METHODS = {"/courses", "/courses/{courseId}", "/course/{courseId}/module/**", "/module/{moduleId}/lesson/**"};
+    private static final String[] STUDENT_POST_METHODS = {"/courses/{courseId}/users/**"};
 
     @Bean
     public RoleHierarchy roleHierarchy() {
@@ -56,7 +57,8 @@ public class SecurityConfig {
                     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                     .cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()))
                     .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers(HttpMethod.GET, STUDENT_METHODS).hasRole(STUDENT)
+                        .requestMatchers(HttpMethod.GET, STUDENT_GET_METHODS).hasRole(STUDENT)
+                        .requestMatchers(HttpMethod.POST, STUDENT_POST_METHODS).hasRole(STUDENT)
                         .requestMatchers(INSTRUCTOR_METHODS).hasRole(INSTRUCTOR)
                         .anyRequest().authenticated())
                 .build();
