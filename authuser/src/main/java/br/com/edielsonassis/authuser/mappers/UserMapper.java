@@ -37,6 +37,13 @@ public class UserMapper {
         return userModel;
     }
 
+    public static void toEntity(UserModel userModel, UserType userType, RoleModel role) {
+        userModel.setUserType(userType);
+        userModel.getPermissions().add(role);
+        userModel.setCreationDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
+        userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));
+    }
+
     public static UserModel toEntityPassword(UserModel userModel, UserRequest userDto) {
         userModel.setPassword(userDto.getPassword());
         userModel.setLastUpdateDate(LocalDateTime.now(ZoneId.of(ZONE_ID)));

@@ -6,7 +6,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,10 +26,10 @@ public class InstructorController {
 
 	private final UserService userService;
 
-    @PostMapping("/subscription")
+    @PutMapping("/subscription")
     public ResponseEntity<UserResponse> registerInstructor(
-            @RequestBody @Validated(UserView.registrationPost.class) 
-            @JsonView(UserView.registrationPost.class) UserRequest userDto) {
+            @RequestBody @Validated(UserView.userInstructor.class) 
+            @JsonView(UserView.userInstructor.class) UserRequest userDto) {
         var user = userService.saveInstructor(userDto);
         user.add(linkTo(methodOn(UserController.class).getOneUser()).withSelfRel());
         return new ResponseEntity<>(user, HttpStatus.CREATED);

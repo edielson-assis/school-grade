@@ -69,14 +69,12 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public UserResponse saveInstructor(UserRequest userDto) {
-        var userModel = UserMapper.toEntity(userDto, UserType.INSTRUCTOR, getRoleType(ROLE_INSTRUCTOR));
-        validateUserNameNotExists(userModel);
-        validateEmailNotExists(userModel);
-        validateCpfNotExists(userModel);
-        encryptPassword(userModel);
+        var userModel = findUserByEmail(userDto.getEmail());
+        validateIfUserIsInstructor(userModel);
+        UserMapper.toEntity(userModel, UserType.INSTRUCTOR, getRoleType(ROLE_INSTRUCTOR));
         log.info("Registering a new Instructor: {}", userModel.getUserNameCustom());
         userRepository.save(userModel);
-        publishUserEvent(userModel, ActionType.CREATE);
+        publishUserEvent(userModel, ActionType.UPDATE);
         var userResponse = new UserResponse();
         BeanUtils.copyProperties(userModel, userResponse);
         getFormattedEnumValue(userModel, userResponse);
@@ -250,5 +248,16 @@ public class UserServiceImpl implements UserService {
 
     private UserModel currentUser() {
         return AuthenticatedUser.getCurrentUser();
+    }
+
+    private boolean isUserInstructor(UserModel user) {
+        return user.getUserType() == UserType.INSTRUCTOR;
+    }
+
+    private void validateIfUserIsInstructor(UserModel userModel) {
+        if (isUserInstructor(userModel)) {
+            log.error("User is already an instructor");
+            throw new ValidationException("User is already an instructor");
+        }
     }
 }

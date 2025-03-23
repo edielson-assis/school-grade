@@ -30,7 +30,7 @@ public class SecurityConfig {
     private static final String MODERATOR = "MODERATOR";
     private static final String STUDENT = "STUDENT";
     private static final String[] PUBLIC_METHODS = {"/auth/**"};
-    private static final String[] ADMIN_MODERATOR_METHODS = {"/users"};
+    private static final String[] ADMIN_MODERATOR_METHODS = {"/users", "/instructors/**"};
     private static final String[] STUDENT_METHODS = {"/users/**"};
 
     @Bean
