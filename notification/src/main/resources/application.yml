@@ -2,11 +2,8 @@
 spring:
   application:
     name: notification-service
-  config:
-    import: 'configserver:'
-  cloud:
-    config:
-      discovery:
-        service-id: config-server
-      username: ${CONFIG_SERVER_USERNAME:admin}
-      password: ${CONFIG_SERVER_PASSWORD:admin}
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  output:
+    ansi:
+      enabled: always
