@@ -1,0 +1,19 @@
+# Server settings
+server:
+  port: ${SERVER_PORT}
+
+# Basic authentication settings
+schoolgrade:
+  serviceRegistry:
+    username: ${SERVICE_REGISTRY_USERNAME}
+    password: ${SERVICE_REGISTRY_PASSWORD}
+
+# Eureka settings
+eureka:
+  server:
+    peer-node-read-timeout-ms: 60000 
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: ${EUREKA_URL}

@@ -1,29 +1,8 @@
-# Server settings
-server:
-  port: ${SERVER_PORT:8761}
-
-# Spring settings
 spring:
   application:
     name: service-registry
-
-# Spring ansi settings
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
   output:
     ansi:
       enabled: always
-
-# Basic authentication settings
-schoolgrade:
-  serviceRegistry:
-    username: ${SERVICE_REGISTRY_USERNAME:admin}
-    password: ${SERVICE_REGISTRY_PASSWORD:admin}
-
-# Eureka settings
-eureka:
-  server:
-    peer-node-read-timeout-ms: 60000 
-  client:
-    register-with-eureka: false
-    fetch-registry: false
-    service-url:
-      defaultZone: http://${schoolgrade.serviceRegistry.username}:${schoolgrade.serviceRegistry.password}@localhost:8761/eureka/
