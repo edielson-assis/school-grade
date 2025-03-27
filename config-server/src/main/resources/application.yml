@@ -1,37 +1,8 @@
-# Server settings
-server:
-  port: 8888
-
-# Spring settings 
 spring:
   application:
     name: config-server
-
-# Spring ansi settings
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
   output:
     ansi:
       enabled: always
-
-# Git settings
-  cloud:
-    config:
-      server:
-        git:
-          uri: ${GIT_URI:git@github.com:edielson-assis/school-grade-config-server-repo.git}
-          default-label: main
-          username: ${GIT_USERNAME:edielson-assis}
-          password: ${GIT_PASSWORD}
-
-# Basic authentication settings
-schoolgrade:
-  serviceRegistry:
-    username: ${SERVICE_REGISTRY_USERNAME:admin}
-    password: ${SERVICE_REGISTRY_PASSWORD:admin}
-
-# Eureka settings
-eureka:
-  client:
-    service-url:
-      defaultZone: http://${schoolgrade.serviceRegistry.username}:${schoolgrade.serviceRegistry.password}@localhost:8761/eureka/
-    instance:
-      hostname: localhost
