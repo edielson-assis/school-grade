@@ -1,0 +1,4 @@
+# Spring settings
+spring:
+  config:
+    import: 'configserver:${CONFIG_SERVER_URL}'
