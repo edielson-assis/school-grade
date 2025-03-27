@@ -1,0 +1,10 @@
+# Spring settings
+spring:
+  config:
+    import: 'configserver:'
+  cloud:
+    config:
+      discovery:
+        service-id: config-server
+      username: ${CONFIG_SERVER_USERNAME:admin}
+      password: ${CONFIG_SERVER_PASSWORD:admin}
