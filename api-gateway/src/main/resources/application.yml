@@ -1,46 +1,8 @@
-# Server settings
-server:
-  port: ${SERVER_PORT:8765}
-
-# Basic authentication settings
-schoolgrade:
-  serviceRegistry:
-    username: ${SERVICE_REGISTRY_USERNAME:admin}
-    password: ${SERVICE_REGISTRY_PASSWORD:admin}
-
-# Eureka settings
-eureka:
-  client:
-    service-url:
-      defaultZone: http://${schoolgrade.serviceRegistry.username}:${schoolgrade.serviceRegistry.password}@localhost:8761/eureka/
-
-# Spring settings
 spring:
   application:
     name: api-gateway
-
-# Spring ansi settings
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
   output:
     ansi:
       enabled: always
-
-# Gateway settings
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-      routes:
-      - id: authuser-service
-        uri: lb://authuser-service
-        predicates:
-        - Path=/authuser-service/**
-      - id: course-service
-        uri: lb://course-service
-        predicates:
-        - Path=/course-service/**
-      - id: notification-service
-        uri: lb://notification-service
-        predicates:
-        - Path=/notification-service/**
